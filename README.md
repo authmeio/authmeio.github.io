@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/logo" alt="Slate: API Documentation Generator" width="226">
+  <img src="https://raw.githubusercontent.com/authmeio/authmeio.github.io/master/source/images/logo.png" alt="Slate: API Documentation Generator" width="226">
   <br>
 </p>
 
