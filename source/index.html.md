@@ -27,16 +27,17 @@ You can quickly get started with the Oauth2 flow to integrate with your website 
 
 # Getting an API key
 
-All the interaction between your website and AuthMe will be based on 2 pair of Keys
+All the interaction between your website and AuthMe will be based on 2 pair of keys
 
 ## Api Key
 
-Api Key: a 38 character string beginning with `k-`, which can be exposed in public clients
-Api Secret: a 38 character string beginngin with `s-`, which should not be put in any public artifact.
+`Api Key`: a 38 character string beginning with `k-`, which can be exposed in public clients
+
+`Api Secret`: a 38 character string beginngin with `s-`, which should not be put in any public artifact.
 
 You can generate keys for your use from the [AuthMe Dashboard](https://account.authme.authme.host/generatekeys)
 
-These keys also act as your ClientId/Secret for the OAuth2/OpenId APIs
+These keys also act as your ClientId/Secret for the OAuth2/OpenID APIs
 
 ## AuthMe Certificate
 
