@@ -41,8 +41,8 @@ These keys also act as your ClientId/Secret for the OAuth2/OpenID APIs
 
 ## AuthMe Certificate
 
-You can get the public keys for [AuthMe JWK Response tokens here](https://admin-authme.authme.authme.host/auth/realms/global/protocol/openid-connect/certs)
+You can get the public keys for [AuthMe JWK Response tokens here](https://oauth.authme.authme.host/auth/realms/global/protocol/openid-connect/certs)
 
 # Oauth2/OpenID
 
-AuthMe uses [Keycloak](www.keycloak.org) to expose an OAuth2 Interface for authentication. Use the [OpenID Discovery EndPoint](https://admin-authme.authme.authme.host/auth/realms/global/.well-known/openid-configuration) to configure your OpenID clients
+AuthMe uses [Keycloak](www.keycloak.org) to expose an OAuth2 Interface for authentication. Use the [OpenID Discovery EndPoint](https://oauth.authme.authme.host/auth/realms/global/.well-known/openid-configuration) to configure your OpenID clients
