@@ -2,12 +2,11 @@
 title: AuthMe
 
 language_tabs:
-  - PHP
   - Java
+  - PHP
   - Python
   - JS
   - Go
-
 
 includes:
   - errors
@@ -39,75 +38,75 @@ Integration has 2 parts.
 
 #Android Integration
 
-## 1. Gradle import
+### 1. Gradle import
 
 Add the following line to your app build.gradle file
 
 `compile 'io.authme:patternlock:0.1.1'`
 
-## 2. Build your project.
+### 2. Build your project.
 
-## 3. Create a config object, set Environment, API Key and user email Id.
+### 3. Create a config object, set Environment, API Key and user email Id.
 
 ```Java
-	Config config = new Config(MainActivity.this);
+    Config config = new Config(MainActivity.this);
     config.setEnvironment(Config.SANDBOX); //Change this to Config.PRODUCTION when you are ready
     config.setAPIKey("YOUR_API_KEY_HERE"); //Remember that the keys are different for sandbox and production
     config.setEmailId("USER_EMAIL_ID");
 ```
 
-## 4. Call AuthMe
+### 4. Call AuthMe
 
 ```Java
    Intent intent = new Intent(MainActivity.this, AuthScreen.class);
    startActivityForResult(intent, RESULT);
 ```
 
-## 5. Callback
+### 5. Callback
 
 We let you know 4 types of results.
 
-### 1. Sign up successfull
+#### 1. Sign up successfull
 
 In case the user didn't have a pattern set earlier, we sign up the user.
 
-### 2. Login Trust Score
+#### 2. Login Trust Score
 
 In case the user swiped to login, we calculate the trust score and give it back to you.
 
-### 3. Reset Pattern
+#### 3. Reset Pattern
 
 In case the user already exists on the platform, but forgot the pattern, we redirect you to reset the pattern.
 
-### 4. Failed to Identify
+#### 4. Failed to Identify
 
 In case the user failed to identify with AuthMe.
 
 Here's the code snippet that shows how to handle these cases.
 
 ```Java
-   @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case RESULT : {
-                switch (resultCode) {
-                    case Config.SIGNUP_PATTERN : {
-                        Toast.makeText(getApplicationContext(), "Sign up successfull", Toast.LENGTH_LONG)
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    switch (requestCode) {
+        case RESULT : {
+            switch (resultCode) {
+                case Config.SIGNUP_PATTERN : {
+                    Toast.makeText(getApplicationContext(), "Sign up successfull", Toast.LENGTH_LONG)
                                 .show();
                     } break;
 
                     case Config.LOGIN_PATTERN : {
-                        Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
+                    Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
                                 .show(); //you will get a trust score in the response here.
                     } break;
 
                     case Config.RESET_PATTERN: {
-                        Toast.makeText(getApplicationContext(), "Reset Pattern", Toast.LENGTH_LONG)
+                    Toast.makeText(getApplicationContext(), "Reset Pattern", Toast.LENGTH_LONG)
                                 .show();
                     } break;
 
                     case Config.RESULT_FAILED : {
-                        Toast.makeText(getApplicationContext(), "Failed To Identify", Toast.LENGTH_LONG)
+                    Toast.makeText(getApplicationContext(), "Failed To Identify", Toast.LENGTH_LONG)
                                 .show();
                         if (data.hasExtra("response")) {
                             Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
@@ -126,7 +125,7 @@ Here's the code snippet that shows how to handle these cases.
     }
 ```
 
-## 6. Trust Score
+### 6. Trust Score
 
 In case the user tried to login, we send the trust score which looks as follows:
 
@@ -134,7 +133,7 @@ In case the user tried to login, we send the trust score which looks as follows:
 
 ```
 
-### What's a trust score?
+#### What's a trust score?
 
 Trust score is the indication of how much the user matches to his behavioural profile.
 
@@ -142,7 +141,7 @@ Signature score 90, user matches 90% to his signature behaviour.
 
 Velocity score 82, user matches 82% to his score behaviour.
 
-### What's hash? Why is it so important?
+#### What's hash? Why is it so important?
 
 You are expected to process the trust score on the server and implement the business logic on the server. 
 
