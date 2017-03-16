@@ -2,6 +2,7 @@
 title: AuthMe
 
 language_tabs:
+  - Android
   - Java
   - PHP
   - Python
@@ -38,83 +39,78 @@ Integration has 2 parts.
 
 #Android Integration
 
-### 1. Gradle import
+## 1. Gradle import
 
 Add the following line to your app build.gradle file
 
 `compile 'io.authme:patternlock:0.1.1'`
 
-### 2. Build your project.
+Build your project.
 
-### 3. Create a config object, set Environment, API Key and user email Id.
-
+## 2. Config
 ```Java
     Config config = new Config(MainActivity.this);
-    config.setEnvironment(Config.SANDBOX); //Change this to Config.PRODUCTION when you are ready
-    config.setAPIKey("YOUR_API_KEY_HERE"); //Remember that the keys are different for sandbox and production
+    config.setEnvironment(Config.SANDBOX); 
+    config.setAPIKey("YOUR_API_KEY_HERE"); 
     config.setEmailId("USER_EMAIL_ID");
 ```
+Create a config object. 
 
-### 4. Call AuthMe
+Set environment to `Config.SANDBOX`, if you are testing. 
 
+Set it to `Config.PRODUCTION` when you are ready.
+
+<aside class="notice">
+Remember to replace API key with your API key before running the program.<br>
+</aside>
+<aside class="notice">
+Ensure that the environment and keys are appropriate.
+</aside>
+
+## 3. Call AuthMe
 ```Java
    Intent intent = new Intent(MainActivity.this, AuthScreen.class);
    startActivityForResult(intent, RESULT);
 ```
 
-### 5. Callback
+Call AuthScreen activity wherever you are signing up or signing in the user. 
 
-We let you know 4 types of results.
+If the use has set the patter already, AuthMe will offer a trust score to you in the callback. 
 
-#### 1. Sign up successfull
+If not, AuthMe will help the user set the pattern. 
 
-In case the user didn't have a pattern set earlier, we sign up the user.
-
-#### 2. Login Trust Score
-
-In case the user swiped to login, we calculate the trust score and give it back to you.
-
-#### 3. Reset Pattern
-
-In case the user already exists on the platform, but forgot the pattern, we redirect you to reset the pattern.
-
-#### 4. Failed to Identify
-
-In case the user failed to identify with AuthMe.
-
-Here's the code snippet that shows how to handle these cases.
-
+## 4. Callback
 ```Java
 @Override
 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    switch (requestCode) {
-        case RESULT : {
-            switch (resultCode) {
-                case Config.SIGNUP_PATTERN : {
-                    Toast.makeText(getApplicationContext(), "Sign up successfull", Toast.LENGTH_LONG)
-                                .show();
-                    } break;
+  switch (requestCode) {
+    case RESULT : {
+        switch (resultCode) {
+            case Config.SIGNUP_PATTERN : {
+                Toast.makeText(getApplicationContext(), "Sign up successfull", Toast.LENGTH_LONG)
+                        .show();
+                 } break;
 
-                    case Config.LOGIN_PATTERN : {
-                    Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
-                                .show(); //you will get a trust score in the response here.
-                    } break;
+            case Config.LOGIN_PATTERN : {
+                Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
+                        .show(); //you will get a trust score in the response here.
+                } break;
 
-                    case Config.RESET_PATTERN: {
-                    Toast.makeText(getApplicationContext(), "Reset Pattern", Toast.LENGTH_LONG)
-                                .show();
-                    } break;
+            case Config.RESET_PATTERN: {
+                Toast.makeText(getApplicationContext(), "Reset Pattern", Toast.LENGTH_LONG)
+                        .show();
+                } break;            
 
-                    case Config.RESULT_FAILED : {
-                    Toast.makeText(getApplicationContext(), "Failed To Identify", Toast.LENGTH_LONG)
-                                .show();
-                        if (data.hasExtra("response")) {
+            case Config.RESULT_FAILED : {
+                Toast.makeText(getApplicationContext(), "Failed To Identify", Toast.LENGTH_LONG)
+                        .show();
+                if (data.hasExtra("response")) {
                             Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
                                     .show();
                         }
-                    } break;
+                } break;
 
-                    default: break;
+                default: break;
                 }
 
             } break;
@@ -125,7 +121,35 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 ```
 
-### 6. Trust Score
+You will get the callback in onActivityResult. 
+
+### a. Sign up successfull
+
+In case the user didn't have a pattern set earlier, we sign up the user. 
+
+Check for case Config.SIGNUP_PATTERN in onActivityResult.
+
+### b. Login Trust Score
+
+In case the user swiped to login, we calculate the trust score and give it back to you.
+
+Check for case Config.LOGIN_PATTERN in onActivityResult.
+
+### c. Reset Pattern
+
+In case the user already exists on the platform, but forgot the pattern, we redirect you to reset the pattern.
+
+Check for case Config.RESET_PATTERN in onActivityResult.
+
+### d. Failed to Identify
+
+In case the user failed to identify with AuthMe.
+
+Check for case Config.RESULT_FAILED in onActivityResult.
+
+The code snippet on the right side shows how to handle these cases.
+
+## 5. Trust Score
 
 In case the user tried to login, we send the trust score which looks as follows:
 
@@ -133,7 +157,7 @@ In case the user tried to login, we send the trust score which looks as follows:
 
 ```
 
-#### What's a trust score?
+### What's a trust score?
 
 Trust score is the indication of how much the user matches to his behavioural profile.
 
@@ -141,7 +165,7 @@ Signature score 90, user matches 90% to his signature behaviour.
 
 Velocity score 82, user matches 82% to his score behaviour.
 
-#### What's hash? Why is it so important?
+### What's hash? Why is it so important?
 
 You are expected to process the trust score on the server and implement the business logic on the server. 
 
@@ -165,12 +189,7 @@ If you bypass the logic of hash calculation, you are vulnarable to a security lo
 
 # Add Ons
 
-## 1. How do I put my logo on the AuthMe Screen?
-
-### a. Upload your logo in the drawable section of your app.
-
-### b. Create a bitmap of your logo and load it into a file accessible only to your app.
-
+## How do I put my logo on the AuthMe Screen?
 ```Java
 String fileName = "mylogo";
 Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.this.getResources(), R.drawable.nestaway_bird_logo);
@@ -184,8 +203,35 @@ Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.this.getResources(), R
             e.printStackTrace();
             fileName = null;
         }
+        intent.putExtra("logo", fileName);
+        startActivityForResult(intent, RESULT);
+```
+a. Upload your logo in the drawable section of your app.
+
+b. Create a bitmap of your logo and load it into a file accessible only to your app.
+
+c. Add the filename in the intent before calling `startActivityForResult(intent, RESULT)`
+
+## How do I change the color of statusbar?
+```Java
+intent.putExtra("statusbar", "#443FFF");
+startActivityForResult(intent, RESULT);
 ```
 
-### c. Add the filename in the intent before calling `startActivityForResult(intent, RESULT);`
+Add the intent extra 'statusbar' before calling `startActivityForResult(intent, RESULT)`
 
-`intent.putExtra("logo", fileName);`
+## How do I change the color of titlebar?
+```Java
+intent.putExtra("titlebar", "#443FFF");
+startActivityForResult(intent, RESULT);
+```
+
+Add the intent extra 'titlebar' before calling `startActivityForResult(intent, RESULT)`
+
+## How do I change the titlebar text?
+```Java
+intent.putExtra("titletext", "Authentication Screen");
+startActivityForResult(intent, RESULT);
+```
+
+Add the intent extra 'titletext' before calling `startActivityForResult(intent, RESULT)`
