@@ -249,26 +249,155 @@
 
 <h2 id="1-gradle-import">1. Gradle import</h2>
 
-<p>Add following line to your app build.gradle file</p>
-<pre class="highlight gradle tab-gradle"><code>    <span class="err">#</span> <span class="n">compile</span> <span class="s1">'io.authme:patternlock:0.1.1'</span>
-</code></pre>
-<h2 id="api-key">Api Key</h2>
+<p>Add the following line to your app build.gradle file</p>
 
-<p><code class="prettyprint">Api Key</code>: a 38 character string beginning with <code class="prettyprint">k-</code>, which can be exposed in public clients</p>
+<p><code class="prettyprint">compile &#39;io.authme:patternlock:0.1.1&#39;</code></p>
 
-<p><code class="prettyprint">Api Secret</code>: a 38 character string beginngin with <code class="prettyprint">s-</code>, which should not be put in any public artifact.</p>
+<h2 id="2-build-your-project">2. Build your project.</h2>
 
-<p>You can generate keys for your use from the <a href="https://account.authme.authme.host/generatekeys">AuthMe Dashboard</a></p>
+<h2 id="3-create-a-config-object-set-environment-api-key-and-user-email-id">3. Create a config object, set Environment, API Key and user email Id.</h2>
 
-<p>These keys also act as your ClientId/Secret for the OAuth2/OpenID APIs</p>
+<p><code class="prettyprint">
+    Config config = new Config(MainActivity.this);
+    config.setEnvironment(Config.SANDBOX); //Change this to Config.PRODUCTION when you are ready
+    config.setAPIKey(&quot;YOUR_API_KEY_HERE&quot;); //Remember that the keys are different for sandbox and production
+    config.setEmailId(&quot;USER_EMAIL_ID&quot;);
+</code></p>
 
-<h2 id="authme-certificate">AuthMe Certificate</h2>
+<h2 id="4-call-authme">4. Call AuthMe</h2>
 
-<p>You can get the public keys for <a href="https://oauth.authme.authme.host/auth/realms/global/protocol/openid-connect/certs">AuthMe JWK Response tokens here</a></p>
+<p><code class="prettyprint">
+   Intent intent = new Intent(MainActivity.this, AuthScreen.class);
+   startActivityForResult(intent, RESULT);
+</code></p>
 
-<h1 id="oauth2-openid">Oauth2/OpenID</h1>
+<h2 id="5-callback">5. Callback</h2>
 
-<p>AuthMe uses <a href="www.keycloak.org">Keycloak</a> to expose an OAuth2 Interface for authentication. Use the <a href="https://oauth.authme.authme.host/auth/realms/global/.well-known/openid-configuration">OpenID Discovery EndPoint</a> to configure your OpenID clients</p>
+<p>We let you know 4 types of results.</p>
+
+<h3 id="1-sign-up-successfull">1. Sign up successfull</h3>
+
+<p>In case the user didn&rsquo;t have a pattern set earlier, we sign up the user.</p>
+
+<h3 id="2-login-trust-score">2. Login Trust Score</h3>
+
+<p>In case the user swiped to login, we calculate the trust score and give it back to you.</p>
+
+<h3 id="3-reset-pattern">3. Reset Pattern</h3>
+
+<p>In case the user already exists on the platform, but forgot the pattern, we redirect you to reset the pattern.</p>
+
+<h3 id="4-failed-to-identify">4. Failed to Identify</h3>
+
+<p>In case the user failed to identify with AuthMe.</p>
+
+<p>Here&rsquo;s the code snippet that shows how to handle these cases.</p>
+
+<p>`
+   @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case RESULT : {
+                switch (resultCode) {
+                    case Config.SIGNUP_PATTERN : {
+                        Toast.makeText(getApplicationContext(), &ldquo;Sign up successfull&rdquo;, Toast.LENGTH_LONG)
+                                .show();
+                    } break;</p>
+
+<p>case Config.LOGIN_PATTERN : {
+                        Toast.makeText(getApplicationContext(), data.getStringExtra(&ldquo;response&rdquo;), Toast.LENGTH_LONG)
+                                .show(); //you will get a trust score in the response here.
+                    } break;</p>
+
+<p>case Config.RESET_PATTERN: {
+                        Toast.makeText(getApplicationContext(), &ldquo;Reset Pattern&rdquo;, Toast.LENGTH_LONG)
+                                .show();
+                    } break;</p>
+
+<p>case Config.RESULT_FAILED : {
+                        Toast.makeText(getApplicationContext(), &ldquo;Failed To Identify&rdquo;, Toast.LENGTH_LONG)
+                                .show();
+                        if (data.hasExtra(&ldquo;response&rdquo;)) {
+                            Toast.makeText(getApplicationContext(), data.getStringExtra(&ldquo;response&rdquo;), Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    } break;</p>
+
+<p>default: break;
+                }</p>
+
+<p>} break;</p>
+
+<p>default: break;</p>
+
+<p>}
+    }
+`</p>
+
+<h2 id="6-trust-score">6. Trust Score</h2>
+
+<p>In case the user tried to login, we send the trust score which looks as follows:</p>
+
+<p>`</p>
+
+<p>`</p>
+
+<h3 id="whats-a-trust-score">What&rsquo;s a trust score?</h3>
+
+<p>Trust score is the indication of how much the user matches to his behavioural profile.</p>
+
+<p>Signature score 90, user matches 90% to his signature behaviour.</p>
+
+<p>Velocity score 82, user matches 82% to his score behaviour.</p>
+
+<h3 id="whats-hash-why-is-it-so-important">What&rsquo;s hash? Why is it so important?</h3>
+
+<p>You are expected to process the trust score on the server and implement the business logic on the server. </p>
+
+<p>When you get a trust score in the LOGIN_PATTERN case above, post this on your server and calculate the hash to verify if the trust score is not tampered with.</p>
+
+<p>In the server integration, we will demonstrate how hash is calculated.</p>
+
+<h1 id="server-integration">Server Integration</h1>
+
+<p>Here&rsquo;s the logici to calculate hash. </p>
+
+<p>Modules on the right side, should help you do this quickly.</p>
+
+<aside class="notice">
+Remember to replace secret key with your secret key before deploying.
+</aside>
+
+<aside class="warning">
+If you bypass the logic of hash calculation, you are vulnarable to a security loophole.
+</aside>
+
+<h1 id="add-ons">Add Ons</h1>
+
+<h2 id="1-how-do-i-put-my-logo-on-the-authme-screen">1. How do I put my logo on the AuthMe Screen?</h2>
+
+<h3 id="a-upload-your-logo-in-the-drawable-section-of-your-app">a. Upload your logo in the drawable section of your app.</h3>
+
+<h3 id="b-create-a-bitmap-of-your-logo-and-load-it-into-a-file-accessible-only-to-your-app">b. Create a bitmap of your logo and load it into a file accessible only to your app.</h3>
+
+<p><code class="prettyprint">
+String fileName = &quot;mylogo&quot;;
+Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.this.getResources(), R.drawable.nestaway_bird_logo);
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE); // MODE_PRIAVE so that no one else can access this file
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fileName = null;
+        }
+</code></p>
+
+<h3 id="c-add-the-filename-in-the-intent-before-calling-startactivityforresult-intent-result">c. Add the filename in the intent before calling <code class="prettyprint">startActivityForResult(intent, RESULT);</code></h3>
+
+<p><code class="prettyprint">intent.putExtra(&quot;logo&quot;, fileName);</code></p>
 
           <h1 id="errors">Errors</h1>
 
