@@ -150,26 +150,38 @@ Check for case Config.RESULT_FAILED in onActivityResult.
 The code snippet on the right side shows how to handle these cases.
 
 ## 5. Trust Score
-
-In case the user tried to login, we send the trust score which looks as follows:
-
 ```Json
-
+{
+"Accept":true,
+"Id":0,
+"Reason":"",
+"hash":"0352044c22fac6455b46de681701a733f86bca1f8477bf015d3ebd9817e2b9dc",
+"motion":0.9333333333333333,
+"path":0.9,
+"speed":0.95
+}
 ```
+In case the user tried to login, we send the trust score which looks as follows:
 
 ### What's a trust score?
 
 Trust score is the indication of how much the user matches to his behavioural profile.
 
-Signature score 90, user matches 90% to his signature behaviour.
+Path score 0.9 means that user matches 90% to his signature behaviour.
 
-Velocity score 82, user matches 82% to his score behaviour.
+Speed score 0.95 means that user matches 95% to his velocity behaviour.
+
+Motion sensor 0.93 means that user matches 93% to his movements behaviour.
 
 ### What's hash? Why is it so important?
 
 You are expected to process the trust score on the server and implement the business logic on the server. 
 
 When you get a trust score in the LOGIN_PATTERN case above, post this on your server and calculate the hash to verify if the trust score is not tampered with.
+
+<aside class="warning">
+If you bypass the logic of hash calculation, you are vulnarable to a security loophole.
+</aside>
 
 In the server integration, we will demonstrate how hash is calculated.
 
@@ -181,10 +193,6 @@ Modules on the right side, should help you do this quickly.
 
 <aside class="notice">
 Remember to replace secret key with your secret key before deploying.
-</aside>
-
-<aside class="warning">
-If you bypass the logic of hash calculation, you are vulnarable to a security loophole.
 </aside>
 
 # Add Ons
