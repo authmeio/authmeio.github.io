@@ -49,19 +49,19 @@ Add the following line to your app build.gradle file
 
 ## 3. Create a config object, set Environment, API Key and user email Id.
 
-`
+```Java
 	Config config = new Config(MainActivity.this);
     config.setEnvironment(Config.SANDBOX); //Change this to Config.PRODUCTION when you are ready
     config.setAPIKey("YOUR_API_KEY_HERE"); //Remember that the keys are different for sandbox and production
     config.setEmailId("USER_EMAIL_ID");
-`
+```
 
 ## 4. Call AuthMe
 
-`
+```Java
    Intent intent = new Intent(MainActivity.this, AuthScreen.class);
    startActivityForResult(intent, RESULT);
-`
+```
 
 ## 5. Callback
 
@@ -85,7 +85,7 @@ In case the user failed to identify with AuthMe.
 
 Here's the code snippet that shows how to handle these cases.
 
-`
+```Java
    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -124,15 +124,15 @@ Here's the code snippet that shows how to handle these cases.
 
       }
     }
-`
+```
 
 ## 6. Trust Score
 
 In case the user tried to login, we send the trust score which looks as follows:
 
-`
+```Json
 
-`
+```
 
 ### What's a trust score?
 
@@ -171,7 +171,8 @@ If you bypass the logic of hash calculation, you are vulnarable to a security lo
 ### a. Upload your logo in the drawable section of your app.
 
 ### b. Create a bitmap of your logo and load it into a file accessible only to your app.
-`
+
+```Java
 String fileName = "mylogo";
 Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.this.getResources(), R.drawable.nestaway_bird_logo);
         try {
@@ -184,7 +185,7 @@ Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.this.getResources(), R
             e.printStackTrace();
             fileName = null;
         }
-`
+```
 
 ### c. Add the filename in the intent before calling `startActivityForResult(intent, RESULT);`
 
