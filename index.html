@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>AuthMe Swipe Authentication</title>
+    <title>AuthMe - Say goodbye to passwords!</title>
 
     <style>
       .highlight table td { padding: 5px; }
@@ -230,25 +230,58 @@
       <div class="content">
         <h1 id="introduction">Introduction</h1>
 
-<p>Welcome to the AuthMe! You can use our AuthMe to authenticate the users on your application or website and get a profile of the user. We aim to remove Password from all user flows, provide high level of trust in the user and make the web secure for both the users and businesses.</p>
+<p>AuthMe helps you do away with passwords in your apps. AuthMe pattern lock brings user experiene and security together.</p>
 
-<p>We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.</p>
+<p>Integration has 2 parts:</p>
 
-<p>You can quickly get started with the Oauth2 flow to integrate with your website or application, or go through our core APIs for a deeper integration.</p>
+<p>1. Client integration</p>
 
-<h1 id="getting-an-api-key">Getting an API key</h1>
+<p>2. Server integration</p>
 
-<p>All the interaction between your website and AuthMe will be based on 2 pair of keys</p>
+<h1 id="getting-started">Getting Started</h1>
 
-<h2 id="api-key">Api Key</h2>
+<p>Before you start off, make sure that you have the API Key and Secret Key from <a href="https://account.authme.authme.host/generatekeys">here.</a></p>
 
-<p><code class="prettyprint">Api Key</code>: a 38 character string beginning with <code class="prettyprint">k-</code>, which can be exposed in public clients</p>
+<p>It can be found on the left panel of the dashboard.</p>
 
-<p><code class="prettyprint">Api Secret</code>: a 38 character string beginngin with <code class="prettyprint">s-</code>, which should not be put in any public artifact.</p>
+<p>API  Key looks like this: <code class="prettyprint">k-162b77f3-5937-4856-af1b-7950a001f732</code> and can be exposed in public clients (Android, iOS, Windows apps)</p>
 
-<p>You can generate keys for your use from the <a href="https://account.authme.authme.host/generatekeys">AuthMe Dashboard</a></p>
+<p>Secret  Key looks like this: <code class="prettyprint">s-001b77f3-5938-0056-af1b-7950a001f712</code> and should not be put in any public artifact.</p>
 
-<p>These keys also act as your ClientId/Secret for the OAuth2/OpenID APIs</p>
+<h2 id="android-integration">Android Integration</h2>
+
+<h3>1. Add following line to your app build.gradle file</h3>
+
+<p><code class="prettyprint">compile 'io.authme:patternlock:0.1.1'</code></p>
+
+<h3>2. Build your project</h3>
+
+<h3>3. Decalare Config object, set Environment, your API Key and user email Id</h3>
+
+<p><code class="prettyprint">Config config = new Config();</code></p>
+
+<p><code class="prettyprint">config.setEnvironment(Config.SANDBOX);</code></p>
+
+<p><code class="prettyprint">config.setApi_key("YOUR_API_KEY_HERE");</code></p>
+
+<p><code class="prettyprint">config.setEmailId("USER_EMAIL_ID");</code></p>
+
+<h3>4. Start the AuthScreen</h3>
+
+<p><code class="prettyprint">Intent intent = new Intent(MainActivity.this, AuthScreen.class);</code></p>
+
+<p><code class="prettyprint">startActivityForResult(intent, RESULT);</code></p>
+
+<p>That's it!</p>
+
+<h3>5. Call Back</h3>
+
+<p>AuthMe will let you know the trust score of the user along different parameters.</p>
+
+<p>A typical trust score looks like this:</p>
+
+<p><code class="prettyprint"> {"signature" : 90,<br>
+"velocity" : 83 }</code></p>
 
 <h2 id="authme-certificate">AuthMe Certificate</h2>
 
