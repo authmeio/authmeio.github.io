@@ -21,12 +21,31 @@ Users keep same passwords everywhere. Despite you following security best practi
 
 AuthMe helps you do away with passwords. With AuthMe pattern lock, bring UX and security together.
 
-You can quickly get started with the Oauth2 flow to integrate with your website or application, or go through our core APIs for a deeper integration.
+# Getting Started
 
+Before you start off, make sure that you have the API Key and Secret Key. If not, get them from [here.](https://account.authme.authme.host/generatekeys)
 
-# Getting an API key
+It can be found on the left panel of the dashboard.
 
-All the interaction between your website and AuthMe will be based on 2 pair of keys
+API Key looks like this: `k-162b77f3-5937-4856-af1b-7950a001f732` and can be exposed in public clients (Android, iOS, Windows apps)
+
+Secret Key looks like this: `s-001b77f3-5938-0056-af1b-7950a001f712` and should not be put in any public artifact.
+
+Integration has 2 parts.
+
+1. Client Integration (Android/iOS/Window)
+
+2. Server Integration (PHP/Java/Go/Python/Js)
+
+#Android Integration
+
+## 1. Gradle import
+
+Add following line to your app build.gradle file
+
+```gradle
+    # compile 'io.authme:patternlock:0.1.1'
+```  
 
 ## Api Key
 
