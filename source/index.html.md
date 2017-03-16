@@ -1,26 +1,25 @@
 ---
-title: AuthMe Swipe Authentication
+title: AuthMe
 
 language_tabs:
-  - shell
-  - ruby
-  - python
-  - javascript
+  - PHP
+  - Java
+  - Python
+  - JS
+  - Go
 
-toc_footers:
-  - <a href='https://account.authme.authme.host'>Sign Up for a Developer Key</a>
 
 includes:
   - errors
 
-search: true
+search: false
 ---
 
 # Introduction
 
-Welcome to the AuthMe! You can use our AuthMe to authenticate the users on your application or website and get a profile of the user. We aim to remove Password from all user flows, provide high level of trust in the user and make the web secure for both the users and businesses.
+Users keep same passwords everywhere. Despite you following security best practices, a data breach on an unrelated app can compromise your users.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+AuthMe helps you do away with passwords. With AuthMe pattern lock, bring UX and security together.
 
 You can quickly get started with the Oauth2 flow to integrate with your website or application, or go through our core APIs for a deeper integration.
 
