@@ -200,7 +200,7 @@
       <script src="javascripts/all_nosearch.js"></script>
   </head>
 
-  <body class="index" data-languages="[&quot;PHP&quot;,&quot;Java&quot;,&quot;Python&quot;,&quot;JS&quot;,&quot;Go&quot;]">
+  <body class="index" data-languages="[&quot;Android&quot;,&quot;Java&quot;,&quot;PHP&quot;,&quot;Python&quot;,&quot;JS&quot;,&quot;Go&quot;]">
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -210,8 +210,9 @@
     <div class="tocify-wrapper">
       <img src="images/logo.png" alt="Logo" />
         <div class="lang-selector">
-              <a href="#" data-language-name="PHP">PHP</a>
+              <a href="#" data-language-name="Android">Android</a>
               <a href="#" data-language-name="Java">Java</a>
+              <a href="#" data-language-name="PHP">PHP</a>
               <a href="#" data-language-name="Python">Python</a>
               <a href="#" data-language-name="JS">JS</a>
               <a href="#" data-language-name="Go">Go</a>
@@ -253,108 +254,138 @@
 
 <p><code class="prettyprint">compile &#39;io.authme:patternlock:0.1.1&#39;</code></p>
 
-<h2 id="2-build-your-project">2. Build your project.</h2>
+<p>Build your project.</p>
 
-<h2 id="3-create-a-config-object-set-environment-api-key-and-user-email-id">3. Create a config object, set Environment, API Key and user email Id.</h2>
+<h2 id="2-config">2. Config</h2>
+<pre class="highlight plaintext"><code>    Config config = new Config(MainActivity.this);
+    config.setEnvironment(Config.SANDBOX); 
+    config.setAPIKey("YOUR_API_KEY_HERE"); 
+    config.setEmailId("USER_EMAIL_ID");
+</code></pre>
+<p>Create a config object. </p>
 
-<p><code class="prettyprint">
-    Config config = new Config(MainActivity.this);
-    config.setEnvironment(Config.SANDBOX); //Change this to Config.PRODUCTION when you are ready
-    config.setAPIKey(&quot;YOUR_API_KEY_HERE&quot;); //Remember that the keys are different for sandbox and production
-    config.setEmailId(&quot;USER_EMAIL_ID&quot;);
-</code></p>
+<p>Set environment to <code class="prettyprint">Config.SANDBOX</code>, if you are testing. </p>
 
-<h2 id="4-call-authme">4. Call AuthMe</h2>
+<p>Set it to <code class="prettyprint">Config.PRODUCTION</code> when you are ready.</p>
 
-<p><code class="prettyprint">
-   Intent intent = new Intent(MainActivity.this, AuthScreen.class);
+<aside class="notice">
+Remember to replace API key with your API key before running the program.<br>
+</aside>
+
+<aside class="notice">
+Ensure that the environment and keys are appropriate.
+</aside>
+
+<h2 id="3-call-authme">3. Call AuthMe</h2>
+<pre class="highlight plaintext"><code>   Intent intent = new Intent(MainActivity.this, AuthScreen.class);
    startActivityForResult(intent, RESULT);
-</code></p>
+</code></pre>
+<p>Call AuthScreen activity wherever you are signing up or signing in the user. </p>
 
-<h2 id="5-callback">5. Callback</h2>
+<p>If the use has set the patter already, AuthMe will offer a trust score to you in the callback. </p>
 
-<p>We let you know 4 types of results.</p>
+<p>If not, AuthMe will help the user set the pattern. </p>
 
-<h3 id="1-sign-up-successfull">1. Sign up successfull</h3>
+<h2 id="4-callback">4. Callback</h2>
+<pre class="highlight plaintext"><code>@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+  switch (requestCode) {
+    case RESULT : {
+        switch (resultCode) {
+            case Config.SIGNUP_PATTERN : {
+                Toast.makeText(getApplicationContext(), "Sign up successfull", Toast.LENGTH_LONG)
+                        .show();
+                 } break;
 
-<p>In case the user didn&rsquo;t have a pattern set earlier, we sign up the user.</p>
+            case Config.LOGIN_PATTERN : {
+                Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
+                        .show(); //you will get a trust score in the response here.
+                } break;
 
-<h3 id="2-login-trust-score">2. Login Trust Score</h3>
+            case Config.RESET_PATTERN: {
+                Toast.makeText(getApplicationContext(), "Reset Pattern", Toast.LENGTH_LONG)
+                        .show();
+                } break;            
+
+            case Config.RESULT_FAILED : {
+                Toast.makeText(getApplicationContext(), "Failed To Identify", Toast.LENGTH_LONG)
+                        .show();
+                if (data.hasExtra("response")) {
+                            Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                } break;
+
+                default: break;
+                }
+
+            } break;
+
+            default: break;
+
+      }
+    }
+</code></pre>
+<p>You will get the callback in onActivityResult. </p>
+
+<h3 id="a-sign-up-successfull">a. Sign up successfull</h3>
+
+<p>In case the user didn&rsquo;t have a pattern set earlier, we sign up the user. </p>
+
+<p>Check for case Config.SIGNUP_PATTERN in onActivityResult.</p>
+
+<h3 id="b-login-trust-score">b. Login Trust Score</h3>
 
 <p>In case the user swiped to login, we calculate the trust score and give it back to you.</p>
 
-<h3 id="3-reset-pattern">3. Reset Pattern</h3>
+<p>Check for case Config.LOGIN_PATTERN in onActivityResult.</p>
+
+<h3 id="c-reset-pattern">c. Reset Pattern</h3>
 
 <p>In case the user already exists on the platform, but forgot the pattern, we redirect you to reset the pattern.</p>
 
-<h3 id="4-failed-to-identify">4. Failed to Identify</h3>
+<p>Check for case Config.RESET_PATTERN in onActivityResult.</p>
+
+<h3 id="d-failed-to-identify">d. Failed to Identify</h3>
 
 <p>In case the user failed to identify with AuthMe.</p>
 
-<p>Here&rsquo;s the code snippet that shows how to handle these cases.</p>
+<p>Check for case Config.RESULT_FAILED in onActivityResult.</p>
 
-<p>`
-   @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case RESULT : {
-                switch (resultCode) {
-                    case Config.SIGNUP_PATTERN : {
-                        Toast.makeText(getApplicationContext(), &ldquo;Sign up successfull&rdquo;, Toast.LENGTH_LONG)
-                                .show();
-                    } break;</p>
+<p>The code snippet on the right side shows how to handle these cases.</p>
 
-<p>case Config.LOGIN_PATTERN : {
-                        Toast.makeText(getApplicationContext(), data.getStringExtra(&ldquo;response&rdquo;), Toast.LENGTH_LONG)
-                                .show(); //you will get a trust score in the response here.
-                    } break;</p>
-
-<p>case Config.RESET_PATTERN: {
-                        Toast.makeText(getApplicationContext(), &ldquo;Reset Pattern&rdquo;, Toast.LENGTH_LONG)
-                                .show();
-                    } break;</p>
-
-<p>case Config.RESULT_FAILED : {
-                        Toast.makeText(getApplicationContext(), &ldquo;Failed To Identify&rdquo;, Toast.LENGTH_LONG)
-                                .show();
-                        if (data.hasExtra(&ldquo;response&rdquo;)) {
-                            Toast.makeText(getApplicationContext(), data.getStringExtra(&ldquo;response&rdquo;), Toast.LENGTH_LONG)
-                                    .show();
-                        }
-                    } break;</p>
-
-<p>default: break;
-                }</p>
-
-<p>} break;</p>
-
-<p>default: break;</p>
-
-<p>}
-    }
-`</p>
-
-<h2 id="6-trust-score">6. Trust Score</h2>
-
+<h2 id="5-trust-score">5. Trust Score</h2>
+<pre class="highlight plaintext"><code>{
+"Accept":true,
+"Id":0,
+"Reason":"",
+"hash":"0352044c22fac6455b46de681701a733f86bca1f8477bf015d3ebd9817e2b9dc",
+"motion":0.9333333333333333,
+"path":0.9,
+"speed":0.95
+}
+</code></pre>
 <p>In case the user tried to login, we send the trust score which looks as follows:</p>
-
-<p>`</p>
-
-<p>`</p>
 
 <h3 id="whats-a-trust-score">What&rsquo;s a trust score?</h3>
 
 <p>Trust score is the indication of how much the user matches to his behavioural profile.</p>
 
-<p>Signature score 90, user matches 90% to his signature behaviour.</p>
+<p>Path score 0.9 means that user matches 90% to his signature behaviour.</p>
 
-<p>Velocity score 82, user matches 82% to his score behaviour.</p>
+<p>Speed score 0.95 means that user matches 95% to his velocity behaviour.</p>
+
+<p>Motion sensor 0.93 means that user matches 93% to his movements behaviour.</p>
 
 <h3 id="whats-hash-why-is-it-so-important">What&rsquo;s hash? Why is it so important?</h3>
 
 <p>You are expected to process the trust score on the server and implement the business logic on the server. </p>
 
 <p>When you get a trust score in the LOGIN_PATTERN case above, post this on your server and calculate the hash to verify if the trust score is not tampered with.</p>
+
+<aside class="warning">
+If you bypass the logic of hash calculation, you are vulnarable to a security loophole.
+</aside>
 
 <p>In the server integration, we will demonstrate how hash is calculated.</p>
 
@@ -368,20 +399,10 @@
 Remember to replace secret key with your secret key before deploying.
 </aside>
 
-<aside class="warning">
-If you bypass the logic of hash calculation, you are vulnarable to a security loophole.
-</aside>
-
 <h1 id="add-ons">Add Ons</h1>
 
-<h2 id="1-how-do-i-put-my-logo-on-the-authme-screen">1. How do I put my logo on the AuthMe Screen?</h2>
-
-<h3 id="a-upload-your-logo-in-the-drawable-section-of-your-app">a. Upload your logo in the drawable section of your app.</h3>
-
-<h3 id="b-create-a-bitmap-of-your-logo-and-load-it-into-a-file-accessible-only-to-your-app">b. Create a bitmap of your logo and load it into a file accessible only to your app.</h3>
-
-<p><code class="prettyprint">
-String fileName = &quot;mylogo&quot;;
+<h2 id="how-do-i-put-my-logo-on-the-authme-screen">How do I put my logo on the AuthMe Screen?</h2>
+<pre class="highlight plaintext"><code>String fileName = "mylogo";
 Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.this.getResources(), R.drawable.nestaway_bird_logo);
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -393,11 +414,32 @@ Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.this.getResources(), R
             e.printStackTrace();
             fileName = null;
         }
-</code></p>
+        intent.putExtra("logo", fileName);
+        startActivityForResult(intent, RESULT);
+</code></pre>
+<p>a. Upload your logo in the drawable section of your app.</p>
 
-<h3 id="c-add-the-filename-in-the-intent-before-calling-startactivityforresult-intent-result">c. Add the filename in the intent before calling <code class="prettyprint">startActivityForResult(intent, RESULT);</code></h3>
+<p>b. Create a bitmap of your logo and load it into a file accessible only to your app.</p>
 
-<p><code class="prettyprint">intent.putExtra(&quot;logo&quot;, fileName);</code></p>
+<p>c. Add the filename in the intent before calling <code class="prettyprint">startActivityForResult(intent, RESULT)</code></p>
+
+<h2 id="how-do-i-change-the-color-of-statusbar">How do I change the color of statusbar?</h2>
+<pre class="highlight plaintext"><code>intent.putExtra("statusbar", "#443FFF");
+startActivityForResult(intent, RESULT);
+</code></pre>
+<p>Add the intent extra &lsquo;statusbar&rsquo; before calling <code class="prettyprint">startActivityForResult(intent, RESULT)</code></p>
+
+<h2 id="how-do-i-change-the-color-of-titlebar">How do I change the color of titlebar?</h2>
+<pre class="highlight plaintext"><code>intent.putExtra("titlebar", "#443FFF");
+startActivityForResult(intent, RESULT);
+</code></pre>
+<p>Add the intent extra &lsquo;titlebar&rsquo; before calling <code class="prettyprint">startActivityForResult(intent, RESULT)</code></p>
+
+<h2 id="how-do-i-change-the-titlebar-text">How do I change the titlebar text?</h2>
+<pre class="highlight plaintext"><code>intent.putExtra("titletext", "Authentication Screen");
+startActivityForResult(intent, RESULT);
+</code></pre>
+<p>Add the intent extra &lsquo;titletext&rsquo; before calling <code class="prettyprint">startActivityForResult(intent, RESULT)</code></p>
 
           <h1 id="errors">Errors</h1>
 
@@ -460,8 +502,9 @@ Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.this.getResources(), R
       </div>
       <div class="dark-box">
           <div class="lang-selector">
-                <a href="#" data-language-name="PHP">PHP</a>
+                <a href="#" data-language-name="Android">Android</a>
                 <a href="#" data-language-name="Java">Java</a>
+                <a href="#" data-language-name="PHP">PHP</a>
                 <a href="#" data-language-name="Python">Python</a>
                 <a href="#" data-language-name="JS">JS</a>
                 <a href="#" data-language-name="Go">Go</a>
