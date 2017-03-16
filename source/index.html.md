@@ -41,26 +41,151 @@ Integration has 2 parts.
 
 ## 1. Gradle import
 
-Add following line to your app build.gradle file
+Add the following line to your app build.gradle file
 
-```gradle
-    # compile 'io.authme:patternlock:0.1.1'
-```  
+`compile 'io.authme:patternlock:0.1.1'`
 
-## Api Key
+## 2. Build your project.
 
-`Api Key`: a 38 character string beginning with `k-`, which can be exposed in public clients
+## 3. Create a config object, set Environment, API Key and user email Id.
 
-`Api Secret`: a 38 character string beginngin with `s-`, which should not be put in any public artifact.
+`
+	Config config = new Config(MainActivity.this);
+    config.setEnvironment(Config.SANDBOX); //Change this to Config.PRODUCTION when you are ready
+    config.setAPIKey("YOUR_API_KEY_HERE"); //Remember that the keys are different for sandbox and production
+    config.setEmailId("USER_EMAIL_ID");
+`
 
-You can generate keys for your use from the [AuthMe Dashboard](https://account.authme.authme.host/generatekeys)
+## 4. Call AuthMe
 
-These keys also act as your ClientId/Secret for the OAuth2/OpenID APIs
+`
+   Intent intent = new Intent(MainActivity.this, AuthScreen.class);
+   startActivityForResult(intent, RESULT);
+`
 
-## AuthMe Certificate
+## 5. Callback
 
-You can get the public keys for [AuthMe JWK Response tokens here](https://oauth.authme.authme.host/auth/realms/global/protocol/openid-connect/certs)
+We let you know 4 types of results.
 
-# Oauth2/OpenID
+### 1. Sign up successfull
 
-AuthMe uses [Keycloak](www.keycloak.org) to expose an OAuth2 Interface for authentication. Use the [OpenID Discovery EndPoint](https://oauth.authme.authme.host/auth/realms/global/.well-known/openid-configuration) to configure your OpenID clients
+In case the user didn't have a pattern set earlier, we sign up the user.
+
+### 2. Login Trust Score
+
+In case the user swiped to login, we calculate the trust score and give it back to you.
+
+### 3. Reset Pattern
+
+In case the user already exists on the platform, but forgot the pattern, we redirect you to reset the pattern.
+
+### 4. Failed to Identify
+
+In case the user failed to identify with AuthMe.
+
+Here's the code snippet that shows how to handle these cases.
+
+`
+   @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case RESULT : {
+                switch (resultCode) {
+                    case Config.SIGNUP_PATTERN : {
+                        Toast.makeText(getApplicationContext(), "Sign up successfull", Toast.LENGTH_LONG)
+                                .show();
+                    } break;
+
+                    case Config.LOGIN_PATTERN : {
+                        Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
+                                .show(); //you will get a trust score in the response here.
+                    } break;
+
+                    case Config.RESET_PATTERN: {
+                        Toast.makeText(getApplicationContext(), "Reset Pattern", Toast.LENGTH_LONG)
+                                .show();
+                    } break;
+
+                    case Config.RESULT_FAILED : {
+                        Toast.makeText(getApplicationContext(), "Failed To Identify", Toast.LENGTH_LONG)
+                                .show();
+                        if (data.hasExtra("response")) {
+                            Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    } break;
+
+                    default: break;
+                }
+
+            } break;
+
+            default: break;
+
+      }
+    }
+`
+
+## 6. Trust Score
+
+In case the user tried to login, we send the trust score which looks as follows:
+
+`
+
+`
+
+### What's a trust score?
+
+Trust score is the indication of how much the user matches to his behavioural profile.
+
+Signature score 90, user matches 90% to his signature behaviour.
+
+Velocity score 82, user matches 82% to his score behaviour.
+
+### What's hash? Why is it so important?
+
+You are expected to process the trust score on the server and implement the business logic on the server. 
+
+When you get a trust score in the LOGIN_PATTERN case above, post this on your server and calculate the hash to verify if the trust score is not tampered with.
+
+In the server integration, we will demonstrate how hash is calculated.
+
+#Server Integration
+
+Here's the logici to calculate hash. 
+
+Modules on the right side, should help you do this quickly.
+
+<aside class="notice">
+Remember to replace secret key with your secret key before deploying.
+</aside>
+
+<aside class="warning">
+If you bypass the logic of hash calculation, you are vulnarable to a security loophole.
+</aside>
+
+# Add Ons
+
+## 1. How do I put my logo on the AuthMe Screen?
+
+### a. Upload your logo in the drawable section of your app.
+
+### b. Create a bitmap of your logo and load it into a file accessible only to your app.
+`
+String fileName = "mylogo";
+Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.this.getResources(), R.drawable.nestaway_bird_logo);
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE); // MODE_PRIAVE so that no one else can access this file
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fileName = null;
+        }
+`
+
+### c. Add the filename in the intent before calling `startActivityForResult(intent, RESULT);`
+
+`intent.putExtra("logo", fileName);`
