@@ -155,10 +155,10 @@ The code snippet on the right side shows how to handle these cases.
 "Accept":true,
 "Id":0,
 "Reason":"",
-"hash":"0352044c22fac6455b46de681701a733f86bca1f8477bf015d3ebd9817e2b9dc",
-"motion":0.9333333333333333,
-"path":0.9,
-"speed":0.95
+"Hash":"0352044c22fac6455b46de681701a733f86bca1f8477bf015d3ebd9817e2b9dc",
+"Motion":0.93,
+"Path":0.9,
+"Speed":0.95
 }
 ```
 In case the user tried to login, we send the trust score which looks as follows:
