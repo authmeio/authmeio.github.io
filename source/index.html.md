@@ -153,12 +153,12 @@ The code snippet on the right side shows how to handle these cases.
 ```Json
 {
 "Accept":true,
-"Id":0,
-"Reason":"",
+"Reason":"Human readable reason for decision",
 "Hash":"0352044c22fac6455b46de681701a733f86bca1f8477bf015d3ebd9817e2b9dc",
 "Motion":0.93,
 "Path":0.9,
-"Speed":0.95
+"Speed":0.95,
+"ReferenceId": "echo-order-id-from-request"
 }
 ```
 In case the user tried to login, we send the trust score which looks as follows:
@@ -187,7 +187,7 @@ In the server integration, we will demonstrate how hash is calculated.
 
 #Server Integration
 
-Here's the logici to calculate hash. 
+Here's the logic to calculate hash. 
 
 Modules on the right side, should help you do this quickly.
 
