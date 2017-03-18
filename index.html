@@ -252,7 +252,7 @@
 
 <p>Add the following line to your app build.gradle file</p>
 
-<p><code class="prettyprint">compile &#39;io.authme:patternlock:0.1.1&#39;</code></p>
+<p><code class="prettyprint">compile &#39;io.authme:patternlock:0.1.2&#39;</code></p>
 
 <p>Build your project.</p>
 
@@ -260,7 +260,6 @@
 <pre class="highlight plaintext"><code>    Config config = new Config(MainActivity.this);
     config.setEnvironment(Config.SANDBOX); 
     config.setAPIKey("YOUR_API_KEY_HERE"); 
-    config.setEmailId("USER_EMAIL_ID");
 </code></pre>
 <p>Create a config object. </p>
 
@@ -278,6 +277,7 @@ Ensure that the environment and keys are appropriate.
 
 <h2 id="3-call-authme">3. Call AuthMe</h2>
 <pre class="highlight plaintext"><code>   Intent intent = new Intent(MainActivity.this, AuthScreen.class);
+   intent.putExtra("email", "USER_EMAIL_ID");
    startActivityForResult(intent, RESULT);
 </code></pre>
 <p>Call AuthScreen activity wherever you are signing up or signing in the user. </p>
