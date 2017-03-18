@@ -360,9 +360,9 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 "Id":0,
 "Reason":"",
 "hash":"0352044c22fac6455b46de681701a733f86bca1f8477bf015d3ebd9817e2b9dc",
-"motion":0.9333333333333333,
-"path":0.9,
-"speed":0.95
+"Motion":83,
+"path":91,
+"speed":72
 }
 </code></pre>
 <p>In case the user tried to login, we send the trust score which looks as follows:</p>
@@ -390,13 +390,59 @@ If you bypass the logic of hash calculation, you are vulnarable to a security lo
 <p>In the server integration, we will demonstrate how hash is calculated.</p>
 
 <h1 id="server-integration">Server Integration</h1>
+<pre class="highlight plaintext"><code>&lt;?php
+namespace authme;
+class AuthmeClient
+{
+    public static function generate_hash($params, $apiKey, $apiSecret)
+    {
+        $str = self::flatten_array($params);
+        $str .= $apiSecret;
+        $str = $apiKey . "|" . $str;
+        print $str;
+        return hash("sha256", $str);
+    }
+    private static function flatten_array($data)
+    {
+        if (empty($data)) {
+            return "|";
+        }
+        $str = "";
+        ksort($data);
+        foreach ($data as $key =&gt; $value) {
+            if ($key === "Hash") {
+                continue;
+            } elseif (is_array($value)) {
+                $str .= self::flatten_array($value);
+            } elseif (is_null($value)) {
+                $str .= "null" . "|";
+            } elseif (is_bool($value)) {
+                $bool_str = $value ? "true" : "false";
+                $str .= $bool_str . "|";
+            } else {
+                $str .= $value . "|";
+            }
+        }
+        return $str;
+    }
+}
+</code></pre><pre class="highlight plaintext"><code>$request = array();
+$request["test"] = "hello";
+$hash = AuthmeClient::generate_hash($request, "YOUR_API_KEY", "YOUR_SECRET_KEY");
 
-<p>Here&rsquo;s the logici to calculate hash. </p>
+if ($hash != "292115573432d504b797a836e3a1936ea5ce9ef61bd90c8096dbd86c449d3d75") {
+    print "Hash is $hash and not 292115573432d504b797a836e3a1936ea5ce9ef61bd90c8096dbd86c449d3d75";
+    throw new \Exception("hash mismatch");
+}
 
-<p>Modules on the right side, should help you do this quickly.</p>
+print "Hash: $hash";
+</code></pre>
+<p>Here&rsquo;s the logic to calculate hash. </p>
+
+<p>Modules on the right side, should help you integrate this quickly.</p>
 
 <aside class="notice">
-Remember to replace secret key with your secret key before deploying!
+Remember to replace API & secret key with your API & secret key before deploying!
 </aside>
 
 <h1 id="add-ons">Add Ons</h1>
