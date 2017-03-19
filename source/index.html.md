@@ -196,7 +196,7 @@ Remember to replace secret key with your secret key before deploying.
 
 # Add Ons
 
-## How do I put my logo on the AuthMe Screen?
+## Put my logo on the AuthMe Screen?
 ```java
 String fileName = "mylogo";
 Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.this.getResources(), R.drawable.nestaway_bird_logo);
@@ -219,7 +219,7 @@ b. Create a bitmap of your logo and load it into a file accessible only to your 
 
 c. Add the filename in the intent before calling `startActivityForResult(intent, RESULT)`
 
-## How do I change the color of statusbar?
+## Change the color of statusbar?
 ```java
 intent.putExtra("statusbar", "#443FFF");
 startActivityForResult(intent, RESULT);
@@ -227,7 +227,7 @@ startActivityForResult(intent, RESULT);
 
 Add the intent extra 'statusbar' before calling `startActivityForResult(intent, RESULT)`
 
-## How do I change the color of titlebar?
+## Change the color of titlebar?
 ```java
 intent.putExtra("titlebar", "#443FFF");
 startActivityForResult(intent, RESULT);
@@ -235,7 +235,7 @@ startActivityForResult(intent, RESULT);
 
 Add the intent extra 'titlebar' before calling `startActivityForResult(intent, RESULT)`
 
-## How do I change the titlebar text?
+## Change the titlebar text?
 ```java
 intent.putExtra("titletext", "Authentication Screen");
 startActivityForResult(intent, RESULT);
