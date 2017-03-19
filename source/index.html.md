@@ -2,12 +2,11 @@
 title: AuthMe
 
 language_tabs:
-  - Android
-  - Java
-  - PHP
-  - Python
-  - JS
-  - Go
+  - android
+  - java
+  - php
+  - javascript
+  - golang
 
 includes:
   - errors
@@ -48,7 +47,7 @@ Add the following line to your app build.gradle file
 Build your project.
 
 ## 2. Config
-```Java
+```java
     Config config = new Config(MainActivity.this);
     config.setEnvironment(Config.SANDBOX); 
     config.setAPIKey("YOUR_API_KEY_HERE"); 
@@ -68,7 +67,7 @@ Ensure that the environment and keys are appropriate.
 </aside>
 
 ## 3. Call AuthMe
-```Java
+```java
    Intent intent = new Intent(MainActivity.this, AuthScreen.class);
    startActivityForResult(intent, RESULT);
 ```
@@ -80,7 +79,7 @@ If the use has set the patter already, AuthMe will offer a trust score to you in
 If not, AuthMe will help the user set the pattern. 
 
 ## 4. Callback
-```Java
+```java
 @Override
 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
   switch (requestCode) {
@@ -150,7 +149,7 @@ Check for case Config.RESULT_FAILED in onActivityResult.
 The code snippet on the right side shows how to handle these cases.
 
 ## 5. Trust Score
-```Json
+```json
 {
 "Accept":true,
 "Reason":"Human readable reason for decision",
@@ -198,7 +197,7 @@ Remember to replace secret key with your secret key before deploying.
 # Add Ons
 
 ## How do I put my logo on the AuthMe Screen?
-```Java
+```java
 String fileName = "mylogo";
 Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.this.getResources(), R.drawable.nestaway_bird_logo);
         try {
@@ -221,7 +220,7 @@ b. Create a bitmap of your logo and load it into a file accessible only to your 
 c. Add the filename in the intent before calling `startActivityForResult(intent, RESULT)`
 
 ## How do I change the color of statusbar?
-```Java
+```java
 intent.putExtra("statusbar", "#443FFF");
 startActivityForResult(intent, RESULT);
 ```
@@ -229,7 +228,7 @@ startActivityForResult(intent, RESULT);
 Add the intent extra 'statusbar' before calling `startActivityForResult(intent, RESULT)`
 
 ## How do I change the color of titlebar?
-```Java
+```java
 intent.putExtra("titlebar", "#443FFF");
 startActivityForResult(intent, RESULT);
 ```
@@ -237,7 +236,7 @@ startActivityForResult(intent, RESULT);
 Add the intent extra 'titlebar' before calling `startActivityForResult(intent, RESULT)`
 
 ## How do I change the titlebar text?
-```Java
+```java
 intent.putExtra("titletext", "Authentication Screen");
 startActivityForResult(intent, RESULT);
 ```
