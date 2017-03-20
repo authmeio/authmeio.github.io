@@ -200,7 +200,7 @@
       <script src="javascripts/all_nosearch.js"></script>
   </head>
 
-  <body class="index" data-languages="[&quot;android&quot;,&quot;java&quot;,&quot;php&quot;,&quot;javascript&quot;,&quot;golang&quot;]">
+  <body class="index" data-languages="[&quot;android&quot;,&quot;java&quot;,&quot;php&quot;,&quot;Python&quot;,&quot;JS&quot;,&quot;Go&quot;]">
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -213,8 +213,9 @@
               <a href="#" data-language-name="android">android</a>
               <a href="#" data-language-name="java">java</a>
               <a href="#" data-language-name="php">php</a>
-              <a href="#" data-language-name="javascript">javascript</a>
-              <a href="#" data-language-name="golang">golang</a>
+              <a href="#" data-language-name="Python">Python</a>
+              <a href="#" data-language-name="JS">JS</a>
+              <a href="#" data-language-name="Go">Go</a>
         </div>
       <div id="toc">
       </div>
@@ -251,15 +252,14 @@
 
 <p>Add the following line to your app build.gradle file</p>
 
-<p><code class="prettyprint">compile &#39;io.authme:patternlock:0.1.1&#39;</code></p>
+<p><code class="prettyprint">compile &#39;io.authme:patternlock:0.1.2&#39;</code></p>
 
 <p>Build your project.</p>
 
 <h2 id="2-config">2. Config</h2>
-<pre class="highlight java tab-java"><code>    <span class="n">Config</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Config</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">this</span><span class="o">);</span>
-    <span class="n">config</span><span class="o">.</span><span class="na">setEnvironment</span><span class="o">(</span><span class="n">Config</span><span class="o">.</span><span class="na">SANDBOX</span><span class="o">);</span> 
-    <span class="n">config</span><span class="o">.</span><span class="na">setAPIKey</span><span class="o">(</span><span class="s">"YOUR_API_KEY_HERE"</span><span class="o">);</span> 
-    <span class="n">config</span><span class="o">.</span><span class="na">setEmailId</span><span class="o">(</span><span class="s">"USER_EMAIL_ID"</span><span class="o">);</span>
+<pre class="highlight plaintext"><code>    Config config = new Config(MainActivity.this);
+    config.setEnvironment(Config.SANDBOX); 
+    config.setAPIKey("YOUR_API_KEY_HERE"); 
 </code></pre>
 <p>Create a config object. </p>
 
@@ -276,8 +276,9 @@ Ensure that the environment and keys are appropriate.
 </aside>
 
 <h2 id="3-call-authme">3. Call AuthMe</h2>
-<pre class="highlight java tab-java"><code>   <span class="n">Intent</span> <span class="n">intent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Intent</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">this</span><span class="o">,</span> <span class="n">AuthScreen</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-   <span class="n">startActivityForResult</span><span class="o">(</span><span class="n">intent</span><span class="o">,</span> <span class="n">RESULT</span><span class="o">);</span>
+<pre class="highlight plaintext"><code>   Intent intent = new Intent(MainActivity.this, AuthScreen.class);
+   intent.putExtra("email", "USER_EMAIL_ID");
+   startActivityForResult(intent, RESULT);
 </code></pre>
 <p>Call AuthScreen activity wherever you are signing up or signing in the user. </p>
 
@@ -286,44 +287,44 @@ Ensure that the environment and keys are appropriate.
 <p>If not, AuthMe will help the user set the pattern. </p>
 
 <h2 id="4-callback">4. Callback</h2>
-<pre class="highlight java tab-java"><code><span class="nd">@Override</span>
-<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onActivityResult</span><span class="o">(</span><span class="kt">int</span> <span class="n">requestCode</span><span class="o">,</span> <span class="kt">int</span> <span class="n">resultCode</span><span class="o">,</span> <span class="n">Intent</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
-  <span class="k">switch</span> <span class="o">(</span><span class="n">requestCode</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">case</span> <span class="n">RESULT</span> <span class="o">:</span> <span class="o">{</span>
-        <span class="k">switch</span> <span class="o">(</span><span class="n">resultCode</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">case</span> <span class="n">Config</span><span class="o">.</span><span class="na">SIGNUP_PATTERN</span> <span class="o">:</span> <span class="o">{</span>
-                <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getApplicationContext</span><span class="o">(),</span> <span class="s">"Sign up successfull"</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_LONG</span><span class="o">)</span>
-                        <span class="o">.</span><span class="na">show</span><span class="o">();</span>
-                 <span class="o">}</span> <span class="k">break</span><span class="o">;</span>
+<pre class="highlight plaintext"><code>@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+  switch (requestCode) {
+    case RESULT : {
+        switch (resultCode) {
+            case Config.SIGNUP_PATTERN : {
+                Toast.makeText(getApplicationContext(), "Sign up successfull", Toast.LENGTH_LONG)
+                        .show();
+                 } break;
 
-            <span class="k">case</span> <span class="n">Config</span><span class="o">.</span><span class="na">LOGIN_PATTERN</span> <span class="o">:</span> <span class="o">{</span>
-                <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getApplicationContext</span><span class="o">(),</span> <span class="n">data</span><span class="o">.</span><span class="na">getStringExtra</span><span class="o">(</span><span class="s">"response"</span><span class="o">),</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_LONG</span><span class="o">)</span>
-                        <span class="o">.</span><span class="na">show</span><span class="o">();</span> <span class="c1">//you will get a trust score in the response here.</span>
-                <span class="o">}</span> <span class="k">break</span><span class="o">;</span>
+            case Config.LOGIN_PATTERN : {
+                Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
+                        .show(); //you will get a trust score in the response here.
+                } break;
 
-            <span class="k">case</span> <span class="n">Config</span><span class="o">.</span><span class="na">RESET_PATTERN</span><span class="o">:</span> <span class="o">{</span>
-                <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getApplicationContext</span><span class="o">(),</span> <span class="s">"Reset Pattern"</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_LONG</span><span class="o">)</span>
-                        <span class="o">.</span><span class="na">show</span><span class="o">();</span>
-                <span class="o">}</span> <span class="k">break</span><span class="o">;</span>            
+            case Config.RESET_PATTERN: {
+                Toast.makeText(getApplicationContext(), "Reset Pattern", Toast.LENGTH_LONG)
+                        .show();
+                } break;            
 
-            <span class="k">case</span> <span class="n">Config</span><span class="o">.</span><span class="na">RESULT_FAILED</span> <span class="o">:</span> <span class="o">{</span>
-                <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getApplicationContext</span><span class="o">(),</span> <span class="s">"Failed To Identify"</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_LONG</span><span class="o">)</span>
-                        <span class="o">.</span><span class="na">show</span><span class="o">();</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">hasExtra</span><span class="o">(</span><span class="s">"response"</span><span class="o">))</span> <span class="o">{</span>
-                            <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getApplicationContext</span><span class="o">(),</span> <span class="n">data</span><span class="o">.</span><span class="na">getStringExtra</span><span class="o">(</span><span class="s">"response"</span><span class="o">),</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_LONG</span><span class="o">)</span>
-                                    <span class="o">.</span><span class="na">show</span><span class="o">();</span>
-                        <span class="o">}</span>
-                <span class="o">}</span> <span class="k">break</span><span class="o">;</span>
+            case Config.RESULT_FAILED : {
+                Toast.makeText(getApplicationContext(), "Failed To Identify", Toast.LENGTH_LONG)
+                        .show();
+                if (data.hasExtra("response")) {
+                            Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                } break;
 
-                <span class="k">default</span><span class="o">:</span> <span class="k">break</span><span class="o">;</span>
-                <span class="o">}</span>
+                default: break;
+                }
 
-            <span class="o">}</span> <span class="k">break</span><span class="o">;</span>
+            } break;
 
-            <span class="k">default</span><span class="o">:</span> <span class="k">break</span><span class="o">;</span>
+            default: break;
 
-      <span class="o">}</span>
-    <span class="o">}</span>
+      }
+    }
 </code></pre>
 <p>You will get the callback in onActivityResult. </p>
 
@@ -356,12 +357,12 @@ Ensure that the environment and keys are appropriate.
 <h2 id="5-trust-score">5. Trust Score</h2>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
 </span><span class="s2">"Accept"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span><span class="w">
-</span><span class="s2">"Reason"</span><span class="p">:</span><span class="s2">"Human readable reason for decision"</span><span class="p">,</span><span class="w">
-</span><span class="s2">"Hash"</span><span class="p">:</span><span class="s2">"0352044c22fac6455b46de681701a733f86bca1f8477bf015d3ebd9817e2b9dc"</span><span class="p">,</span><span class="w">
-</span><span class="s2">"Motion"</span><span class="p">:</span><span class="mf">0.93</span><span class="p">,</span><span class="w">
-</span><span class="s2">"Path"</span><span class="p">:</span><span class="mf">0.9</span><span class="p">,</span><span class="w">
-</span><span class="s2">"Speed"</span><span class="p">:</span><span class="mf">0.95</span><span class="p">,</span><span class="w">
-</span><span class="s2">"ReferenceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"echo-order-id-from-request"</span><span class="w">
+</span><span class="s2">"Id"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="w">
+</span><span class="s2">"Reason"</span><span class="p">:</span><span class="s2">""</span><span class="p">,</span><span class="w">
+</span><span class="s2">"hash"</span><span class="p">:</span><span class="s2">"0352044c22fac6455b46de681701a733f86bca1f8477bf015d3ebd9817e2b9dc"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"Motion"</span><span class="p">:</span><span class="mi">83</span><span class="p">,</span><span class="w">
+</span><span class="s2">"path"</span><span class="p">:</span><span class="mi">91</span><span class="p">,</span><span class="w">
+</span><span class="s2">"speed"</span><span class="p">:</span><span class="mi">72</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>In case the user tried to login, we send the trust score which looks as follows:</p>
@@ -389,32 +390,129 @@ If you bypass the logic of hash calculation, you are vulnarable to a security lo
 <p>In the server integration, we will demonstrate how hash is calculated.</p>
 
 <h1 id="server-integration">Server Integration</h1>
+<pre class="highlight java tab-java"><code><span class="kn">import</span> <span class="nn">java.security.MessageDigest</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.security.NoSuchAlgorithmException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Map</span><span class="o">;</span>
 
+
+<span class="kd">class</span> <span class="nc">HashUtils</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">SEPARATOR</span> <span class="o">=</span> <span class="s">"|"</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">HASH_KEY</span> <span class="o">=</span> <span class="s">"hash"</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">SHA_256</span> <span class="o">=</span> <span class="s">"SHA-256"</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">Exception</span> <span class="o">{</span>
+    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">re</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;();</span>
+    <span class="n">re</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"test"</span><span class="o">,</span> <span class="s">"hello"</span><span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">generateHash</span><span class="o">(</span><span class="n">re</span><span class="o">,</span> <span class="s">"YOUR_API_KEY"</span><span class="o">,</span> <span class="s">"YOUR_SECRET_KEY"</span><span class="o">));</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">generateHash</span><span class="o">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">requestMap</span><span class="o">,</span> <span class="n">String</span> <span class="n">apiKey</span><span class="o">,</span> <span class="n">String</span> <span class="n">apiSecret</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">NoSuchAlgorithmException</span> <span class="o">{</span>
+    <span class="n">String</span><span class="o">[]</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">requestMap</span><span class="o">.</span><span class="na">keySet</span><span class="o">().</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="n">String</span><span class="o">[]{});</span>
+    <span class="n">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">keys</span><span class="o">);</span>
+    <span class="n">StringBuilder</span> <span class="n">hashString</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuilder</span><span class="o">(</span><span class="n">apiKey</span><span class="o">);</span>
+
+    <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">key</span> <span class="o">:</span> <span class="n">keys</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">HASH_KEY</span><span class="o">.</span><span class="na">equalsIgnoreCase</span><span class="o">(</span><span class="n">key</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">continue</span><span class="o">;</span>
+      <span class="o">}</span>
+      <span class="n">Object</span> <span class="n">value</span> <span class="o">=</span> <span class="n">requestMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+      <span class="n">hashString</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">SEPARATOR</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">value</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="n">hashString</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">SEPARATOR</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="n">apiSecret</span><span class="o">);</span>
+
+    <span class="n">MessageDigest</span> <span class="n">digest</span> <span class="o">=</span> <span class="n">MessageDigest</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="n">SHA_256</span><span class="o">);</span>
+    <span class="kt">byte</span><span class="o">[]</span> <span class="n">hash</span> <span class="o">=</span> <span class="n">digest</span><span class="o">.</span><span class="na">digest</span><span class="o">(</span><span class="n">hashString</span><span class="o">.</span><span class="na">toString</span><span class="o">().</span><span class="na">getBytes</span><span class="o">());</span>
+    <span class="k">return</span> <span class="nf">bytesToHex</span><span class="o">(</span><span class="n">hash</span><span class="o">);</span>
+
+
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">bytesToHex</span><span class="o">(</span><span class="kt">byte</span><span class="o">[]</span> <span class="n">bytes</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">StringBuilder</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuilder</span><span class="o">();</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">byte</span> <span class="n">b</span> <span class="o">:</span> <span class="n">bytes</span><span class="o">)</span> <span class="n">result</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">Integer</span><span class="o">.</span><span class="na">toString</span><span class="o">((</span><span class="n">b</span> <span class="o">&amp;</span> <span class="mh">0xff</span><span class="o">)</span> <span class="o">+</span> <span class="mh">0x100</span><span class="o">,</span> <span class="mi">16</span><span class="o">).</span><span class="na">substring</span><span class="o">(</span><span class="mi">1</span><span class="o">));</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre><pre class="highlight php tab-php"><code><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">authme</span><span class="p">;</span>
+<span class="k">class</span> <span class="nc">AuthmeClient</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">generate_hash</span><span class="p">(</span><span class="nv">$params</span><span class="p">,</span> <span class="nv">$apiKey</span><span class="p">,</span> <span class="nv">$apiSecret</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$str</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">flatten_array</span><span class="p">(</span><span class="nv">$params</span><span class="p">);</span>
+        <span class="nv">$str</span> <span class="o">.=</span> <span class="nv">$apiSecret</span><span class="p">;</span>
+        <span class="nv">$str</span> <span class="o">=</span> <span class="nv">$apiKey</span> <span class="o">.</span> <span class="s2">"|"</span> <span class="o">.</span> <span class="nv">$str</span><span class="p">;</span>
+        <span class="k">print</span> <span class="nv">$str</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="s2">"sha256"</span><span class="p">,</span> <span class="nv">$str</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">private</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">flatten_array</span><span class="p">(</span><span class="nv">$data</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">empty</span><span class="p">(</span><span class="nv">$data</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s2">"|"</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nv">$str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+        <span class="nb">ksort</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$data</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nv">$key</span> <span class="o">===</span> <span class="s2">"Hash"</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nb">is_array</span><span class="p">(</span><span class="nv">$value</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nv">$str</span> <span class="o">.=</span> <span class="nx">self</span><span class="o">::</span><span class="na">flatten_array</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nb">is_null</span><span class="p">(</span><span class="nv">$value</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nv">$str</span> <span class="o">.=</span> <span class="s2">"null"</span> <span class="o">.</span> <span class="s2">"|"</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nb">is_bool</span><span class="p">(</span><span class="nv">$value</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nv">$bool_str</span> <span class="o">=</span> <span class="nv">$value</span> <span class="o">?</span> <span class="s2">"true"</span> <span class="o">:</span> <span class="s2">"false"</span><span class="p">;</span>
+                <span class="nv">$str</span> <span class="o">.=</span> <span class="nv">$bool_str</span> <span class="o">.</span> <span class="s2">"|"</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nv">$str</span> <span class="o">.=</span> <span class="nv">$value</span> <span class="o">.</span> <span class="s2">"|"</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nv">$str</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nv">$request</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+<span class="nv">$request</span><span class="p">[</span><span class="s2">"test"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"hello"</span><span class="p">;</span>
+<span class="nv">$hash</span> <span class="o">=</span> <span class="nx">AuthmeClient</span><span class="o">::</span><span class="na">generate_hash</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="s2">"YOUR_API_KEY"</span><span class="p">,</span> <span class="s2">"YOUR_SECRET_KEY"</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$hash</span> <span class="o">!=</span> <span class="s2">"292115573432d504b797a836e3a1936ea5ce9ef61bd90c8096dbd86c449d3d75"</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">print</span> <span class="s2">"Hash is </span><span class="nv">$hash</span><span class="s2"> and not 292115573432d504b797a836e3a1936ea5ce9ef61bd90c8096dbd86c449d3d75"</span><span class="p">;</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nx">\Exception</span><span class="p">(</span><span class="s2">"hash mismatch"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">print</span> <span class="s2">"Hash: </span><span class="nv">$hash</span><span class="s2">"</span><span class="p">;</span>
+</code></pre>
 <p>Here&rsquo;s the logic to calculate hash. </p>
 
-<p>Modules on the right side, should help you do this quickly.</p>
+<p>Modules on the right side, should help you integrate this quickly.</p>
+
+<p>Click on PHP, Java or other tabs as relevant to your server technology.</p>
 
 <aside class="notice">
-Remember to replace secret key with your secret key before deploying.
+Remember to replace API & secret key with your API & secret key before deploying!
 </aside>
 
 <h1 id="add-ons">Add Ons</h1>
 
 <h2 id="how-do-i-put-my-logo-on-the-authme-screen">How do I put my logo on the AuthMe Screen?</h2>
-<pre class="highlight java tab-java"><code><span class="n">String</span> <span class="n">fileName</span> <span class="o">=</span> <span class="s">"mylogo"</span><span class="o">;</span>
-<span class="n">Bitmap</span> <span class="n">bitmap</span> <span class="o">=</span> <span class="n">BitmapFactory</span><span class="o">.</span><span class="na">decodeResource</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">this</span><span class="o">.</span><span class="na">getResources</span><span class="o">(),</span> <span class="n">R</span><span class="o">.</span><span class="na">drawable</span><span class="o">.</span><span class="na">nestaway_bird_logo</span><span class="o">);</span>
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="n">ByteArrayOutputStream</span> <span class="n">bytes</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="o">();</span>
-            <span class="n">bitmap</span><span class="o">.</span><span class="na">compress</span><span class="o">(</span><span class="n">Bitmap</span><span class="o">.</span><span class="na">CompressFormat</span><span class="o">.</span><span class="na">JPEG</span><span class="o">,</span> <span class="mi">100</span><span class="o">,</span> <span class="n">bytes</span><span class="o">);</span>
-            <span class="n">FileOutputStream</span> <span class="n">fo</span> <span class="o">=</span> <span class="n">openFileOutput</span><span class="o">(</span><span class="n">fileName</span><span class="o">,</span> <span class="n">Context</span><span class="o">.</span><span class="na">MODE_PRIVATE</span><span class="o">);</span> <span class="c1">// MODE_PRIAVE so that no one else can access this file</span>
-            <span class="n">fo</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">bytes</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">());</span>
-            <span class="n">fo</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
-            <span class="n">fileName</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="n">intent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="s">"logo"</span><span class="o">,</span> <span class="n">fileName</span><span class="o">);</span>
-        <span class="n">startActivityForResult</span><span class="o">(</span><span class="n">intent</span><span class="o">,</span> <span class="n">RESULT</span><span class="o">);</span>
+<pre class="highlight plaintext"><code>String fileName = "mylogo";
+Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.this.getResources(), R.drawable.nestaway_bird_logo);
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE); // MODE_PRIAVE so that no one else can access this file
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fileName = null;
+        }
+intent.putExtra("logo", fileName);
+startActivityForResult(intent, RESULT);
 </code></pre>
 <p>a. Upload your logo in the drawable section of your app.</p>
 
@@ -423,20 +521,20 @@ Remember to replace secret key with your secret key before deploying.
 <p>c. Add the filename in the intent before calling <code class="prettyprint">startActivityForResult(intent, RESULT)</code></p>
 
 <h2 id="how-do-i-change-the-color-of-statusbar">How do I change the color of statusbar?</h2>
-<pre class="highlight java tab-java"><code><span class="n">intent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="s">"statusbar"</span><span class="o">,</span> <span class="s">"#443FFF"</span><span class="o">);</span>
-<span class="n">startActivityForResult</span><span class="o">(</span><span class="n">intent</span><span class="o">,</span> <span class="n">RESULT</span><span class="o">);</span>
+<pre class="highlight plaintext"><code>intent.putExtra("statusbar", "#443FFF");
+startActivityForResult(intent, RESULT);
 </code></pre>
 <p>Add the intent extra &lsquo;statusbar&rsquo; before calling <code class="prettyprint">startActivityForResult(intent, RESULT)</code></p>
 
 <h2 id="how-do-i-change-the-color-of-titlebar">How do I change the color of titlebar?</h2>
-<pre class="highlight java tab-java"><code><span class="n">intent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="s">"titlebar"</span><span class="o">,</span> <span class="s">"#443FFF"</span><span class="o">);</span>
-<span class="n">startActivityForResult</span><span class="o">(</span><span class="n">intent</span><span class="o">,</span> <span class="n">RESULT</span><span class="o">);</span>
+<pre class="highlight plaintext"><code>intent.putExtra("titlebar", "#443FFF");
+startActivityForResult(intent, RESULT);
 </code></pre>
 <p>Add the intent extra &lsquo;titlebar&rsquo; before calling <code class="prettyprint">startActivityForResult(intent, RESULT)</code></p>
 
 <h2 id="how-do-i-change-the-titlebar-text">How do I change the titlebar text?</h2>
-<pre class="highlight java tab-java"><code><span class="n">intent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="s">"titletext"</span><span class="o">,</span> <span class="s">"Authentication Screen"</span><span class="o">);</span>
-<span class="n">startActivityForResult</span><span class="o">(</span><span class="n">intent</span><span class="o">,</span> <span class="n">RESULT</span><span class="o">);</span>
+<pre class="highlight plaintext"><code>intent.putExtra("titletext", "Authentication Screen");
+startActivityForResult(intent, RESULT);
 </code></pre>
 <p>Add the intent extra &lsquo;titletext&rsquo; before calling <code class="prettyprint">startActivityForResult(intent, RESULT)</code></p>
 
@@ -504,8 +602,9 @@ Remember to replace secret key with your secret key before deploying.
                 <a href="#" data-language-name="android">android</a>
                 <a href="#" data-language-name="java">java</a>
                 <a href="#" data-language-name="php">php</a>
-                <a href="#" data-language-name="javascript">javascript</a>
-                <a href="#" data-language-name="golang">golang</a>
+                <a href="#" data-language-name="Python">Python</a>
+                <a href="#" data-language-name="JS">JS</a>
+                <a href="#" data-language-name="Go">Go</a>
           </div>
       </div>
     </div>
