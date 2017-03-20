@@ -200,7 +200,7 @@
       <script src="javascripts/all_nosearch.js"></script>
   </head>
 
-  <body class="index" data-languages="[&quot;android&quot;,&quot;java&quot;,&quot;php&quot;,&quot;Python&quot;,&quot;JS&quot;,&quot;Go&quot;]">
+  <body class="index" data-languages="[&quot;java&quot;,&quot;php&quot;,&quot;Python&quot;,&quot;JS&quot;,&quot;Go&quot;]">
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -210,7 +210,6 @@
     <div class="tocify-wrapper">
       <img src="images/logo.png" alt="Logo" />
         <div class="lang-selector">
-              <a href="#" data-language-name="android">android</a>
               <a href="#" data-language-name="java">java</a>
               <a href="#" data-language-name="php">php</a>
               <a href="#" data-language-name="Python">Python</a>
@@ -257,9 +256,9 @@
 <p>Build your project.</p>
 
 <h2 id="2-config">2. Config</h2>
-<pre class="highlight plaintext"><code>    Config config = new Config(MainActivity.this);
-    config.setEnvironment(Config.SANDBOX); 
-    config.setAPIKey("YOUR_API_KEY_HERE"); 
+<pre class="highlight java tab-java"><code>    <span class="n">Config</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Config</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">this</span><span class="o">);</span>
+    <span class="n">config</span><span class="o">.</span><span class="na">setEnvironment</span><span class="o">(</span><span class="n">Config</span><span class="o">.</span><span class="na">SANDBOX</span><span class="o">);</span> 
+    <span class="n">config</span><span class="o">.</span><span class="na">setAPIKey</span><span class="o">(</span><span class="s">"YOUR_API_KEY_HERE"</span><span class="o">);</span> 
 </code></pre>
 <p>Create a config object. </p>
 
@@ -276,9 +275,9 @@ Ensure that the environment and keys are appropriate.
 </aside>
 
 <h2 id="3-call-authme">3. Call AuthMe</h2>
-<pre class="highlight plaintext"><code>   Intent intent = new Intent(MainActivity.this, AuthScreen.class);
-   intent.putExtra("email", "USER_EMAIL_ID");
-   startActivityForResult(intent, RESULT);
+<pre class="highlight java tab-java"><code>   <span class="n">Intent</span> <span class="n">intent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Intent</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">this</span><span class="o">,</span> <span class="n">AuthScreen</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+   <span class="n">intent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="s">"email"</span><span class="o">,</span> <span class="s">"USER_EMAIL_ID"</span><span class="o">);</span>
+   <span class="n">startActivityForResult</span><span class="o">(</span><span class="n">intent</span><span class="o">,</span> <span class="n">RESULT</span><span class="o">);</span>
 </code></pre>
 <p>Call AuthScreen activity wherever you are signing up or signing in the user. </p>
 
@@ -287,44 +286,44 @@ Ensure that the environment and keys are appropriate.
 <p>If not, AuthMe will help the user set the pattern. </p>
 
 <h2 id="4-callback">4. Callback</h2>
-<pre class="highlight plaintext"><code>@Override
-protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-  switch (requestCode) {
-    case RESULT : {
-        switch (resultCode) {
-            case Config.SIGNUP_PATTERN : {
-                Toast.makeText(getApplicationContext(), "Sign up successfull", Toast.LENGTH_LONG)
-                        .show();
-                 } break;
+<pre class="highlight java tab-java"><code><span class="nd">@Override</span>
+<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onActivityResult</span><span class="o">(</span><span class="kt">int</span> <span class="n">requestCode</span><span class="o">,</span> <span class="kt">int</span> <span class="n">resultCode</span><span class="o">,</span> <span class="n">Intent</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">switch</span> <span class="o">(</span><span class="n">requestCode</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="n">RESULT</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="k">switch</span> <span class="o">(</span><span class="n">resultCode</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">case</span> <span class="n">Config</span><span class="o">.</span><span class="na">SIGNUP_PATTERN</span> <span class="o">:</span> <span class="o">{</span>
+                <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getApplicationContext</span><span class="o">(),</span> <span class="s">"Sign up successfull"</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_LONG</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">show</span><span class="o">();</span>
+                 <span class="o">}</span> <span class="k">break</span><span class="o">;</span>
 
-            case Config.LOGIN_PATTERN : {
-                Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
-                        .show(); //you will get a trust score in the response here.
-                } break;
+            <span class="k">case</span> <span class="n">Config</span><span class="o">.</span><span class="na">LOGIN_PATTERN</span> <span class="o">:</span> <span class="o">{</span>
+                <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getApplicationContext</span><span class="o">(),</span> <span class="n">data</span><span class="o">.</span><span class="na">getStringExtra</span><span class="o">(</span><span class="s">"response"</span><span class="o">),</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_LONG</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">show</span><span class="o">();</span> <span class="c1">//you will get a trust score in the response here.</span>
+                <span class="o">}</span> <span class="k">break</span><span class="o">;</span>
 
-            case Config.RESET_PATTERN: {
-                Toast.makeText(getApplicationContext(), "Reset Pattern", Toast.LENGTH_LONG)
-                        .show();
-                } break;            
+            <span class="k">case</span> <span class="n">Config</span><span class="o">.</span><span class="na">RESET_PATTERN</span><span class="o">:</span> <span class="o">{</span>
+                <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getApplicationContext</span><span class="o">(),</span> <span class="s">"Reset Pattern"</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_LONG</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">show</span><span class="o">();</span>
+                <span class="o">}</span> <span class="k">break</span><span class="o">;</span>            
 
-            case Config.RESULT_FAILED : {
-                Toast.makeText(getApplicationContext(), "Failed To Identify", Toast.LENGTH_LONG)
-                        .show();
-                if (data.hasExtra("response")) {
-                            Toast.makeText(getApplicationContext(), data.getStringExtra("response"), Toast.LENGTH_LONG)
-                                    .show();
-                        }
-                } break;
+            <span class="k">case</span> <span class="n">Config</span><span class="o">.</span><span class="na">RESULT_FAILED</span> <span class="o">:</span> <span class="o">{</span>
+                <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getApplicationContext</span><span class="o">(),</span> <span class="s">"Failed To Identify"</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_LONG</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">show</span><span class="o">();</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">hasExtra</span><span class="o">(</span><span class="s">"response"</span><span class="o">))</span> <span class="o">{</span>
+                            <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getApplicationContext</span><span class="o">(),</span> <span class="n">data</span><span class="o">.</span><span class="na">getStringExtra</span><span class="o">(</span><span class="s">"response"</span><span class="o">),</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_LONG</span><span class="o">)</span>
+                                    <span class="o">.</span><span class="na">show</span><span class="o">();</span>
+                        <span class="o">}</span>
+                <span class="o">}</span> <span class="k">break</span><span class="o">;</span>
 
-                default: break;
-                }
+                <span class="k">default</span><span class="o">:</span> <span class="k">break</span><span class="o">;</span>
+                <span class="o">}</span>
 
-            } break;
+            <span class="o">}</span> <span class="k">break</span><span class="o">;</span>
 
-            default: break;
+            <span class="k">default</span><span class="o">:</span> <span class="k">break</span><span class="o">;</span>
 
-      }
-    }
+      <span class="o">}</span>
+    <span class="o">}</span>
 </code></pre>
 <p>You will get the callback in onActivityResult. </p>
 
@@ -499,20 +498,20 @@ Remember to replace API & secret key with your API & secret key before deploying
 <h1 id="add-ons">Add Ons</h1>
 
 <h2 id="how-do-i-put-my-logo-on-the-authme-screen">How do I put my logo on the AuthMe Screen?</h2>
-<pre class="highlight plaintext"><code>String fileName = "mylogo";
-Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.this.getResources(), R.drawable.nestaway_bird_logo);
-        try {
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-            FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE); // MODE_PRIAVE so that no one else can access this file
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fileName = null;
-        }
-intent.putExtra("logo", fileName);
-startActivityForResult(intent, RESULT);
+<pre class="highlight java tab-java"><code><span class="n">String</span> <span class="n">fileName</span> <span class="o">=</span> <span class="s">"mylogo"</span><span class="o">;</span>
+<span class="n">Bitmap</span> <span class="n">bitmap</span> <span class="o">=</span> <span class="n">BitmapFactory</span><span class="o">.</span><span class="na">decodeResource</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">this</span><span class="o">.</span><span class="na">getResources</span><span class="o">(),</span> <span class="n">R</span><span class="o">.</span><span class="na">drawable</span><span class="o">.</span><span class="na">nestaway_bird_logo</span><span class="o">);</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">ByteArrayOutputStream</span> <span class="n">bytes</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="o">();</span>
+            <span class="n">bitmap</span><span class="o">.</span><span class="na">compress</span><span class="o">(</span><span class="n">Bitmap</span><span class="o">.</span><span class="na">CompressFormat</span><span class="o">.</span><span class="na">JPEG</span><span class="o">,</span> <span class="mi">100</span><span class="o">,</span> <span class="n">bytes</span><span class="o">);</span>
+            <span class="n">FileOutputStream</span> <span class="n">fo</span> <span class="o">=</span> <span class="n">openFileOutput</span><span class="o">(</span><span class="n">fileName</span><span class="o">,</span> <span class="n">Context</span><span class="o">.</span><span class="na">MODE_PRIVATE</span><span class="o">);</span> <span class="c1">// MODE_PRIAVE so that no one else can access this file</span>
+            <span class="n">fo</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">bytes</span><span class="o">.</span><span class="na">toByteArray</span><span class="o">());</span>
+            <span class="n">fo</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+            <span class="n">fileName</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+<span class="n">intent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="s">"logo"</span><span class="o">,</span> <span class="n">fileName</span><span class="o">);</span>
+<span class="n">startActivityForResult</span><span class="o">(</span><span class="n">intent</span><span class="o">,</span> <span class="n">RESULT</span><span class="o">);</span>
 </code></pre>
 <p>a. Upload your logo in the drawable section of your app.</p>
 
@@ -521,20 +520,20 @@ startActivityForResult(intent, RESULT);
 <p>c. Add the filename in the intent before calling <code class="prettyprint">startActivityForResult(intent, RESULT)</code></p>
 
 <h2 id="how-do-i-change-the-color-of-statusbar">How do I change the color of statusbar?</h2>
-<pre class="highlight plaintext"><code>intent.putExtra("statusbar", "#443FFF");
-startActivityForResult(intent, RESULT);
+<pre class="highlight java tab-java"><code><span class="n">intent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="s">"statusbar"</span><span class="o">,</span> <span class="s">"#443FFF"</span><span class="o">);</span>
+<span class="n">startActivityForResult</span><span class="o">(</span><span class="n">intent</span><span class="o">,</span> <span class="n">RESULT</span><span class="o">);</span>
 </code></pre>
 <p>Add the intent extra &lsquo;statusbar&rsquo; before calling <code class="prettyprint">startActivityForResult(intent, RESULT)</code></p>
 
 <h2 id="how-do-i-change-the-color-of-titlebar">How do I change the color of titlebar?</h2>
-<pre class="highlight plaintext"><code>intent.putExtra("titlebar", "#443FFF");
-startActivityForResult(intent, RESULT);
+<pre class="highlight java tab-java"><code><span class="n">intent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="s">"titlebar"</span><span class="o">,</span> <span class="s">"#443FFF"</span><span class="o">);</span>
+<span class="n">startActivityForResult</span><span class="o">(</span><span class="n">intent</span><span class="o">,</span> <span class="n">RESULT</span><span class="o">);</span>
 </code></pre>
 <p>Add the intent extra &lsquo;titlebar&rsquo; before calling <code class="prettyprint">startActivityForResult(intent, RESULT)</code></p>
 
 <h2 id="how-do-i-change-the-titlebar-text">How do I change the titlebar text?</h2>
-<pre class="highlight plaintext"><code>intent.putExtra("titletext", "Authentication Screen");
-startActivityForResult(intent, RESULT);
+<pre class="highlight java tab-java"><code><span class="n">intent</span><span class="o">.</span><span class="na">putExtra</span><span class="o">(</span><span class="s">"titletext"</span><span class="o">,</span> <span class="s">"Authentication Screen"</span><span class="o">);</span>
+<span class="n">startActivityForResult</span><span class="o">(</span><span class="n">intent</span><span class="o">,</span> <span class="n">RESULT</span><span class="o">);</span>
 </code></pre>
 <p>Add the intent extra &lsquo;titletext&rsquo; before calling <code class="prettyprint">startActivityForResult(intent, RESULT)</code></p>
 
@@ -599,7 +598,6 @@ startActivityForResult(intent, RESULT);
       </div>
       <div class="dark-box">
           <div class="lang-selector">
-                <a href="#" data-language-name="android">android</a>
                 <a href="#" data-language-name="java">java</a>
                 <a href="#" data-language-name="php">php</a>
                 <a href="#" data-language-name="Python">Python</a>
