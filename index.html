@@ -200,7 +200,7 @@
       <script src="javascripts/all_nosearch.js"></script>
   </head>
 
-  <body class="index" data-languages="[&quot;java&quot;,&quot;php&quot;,&quot;Python&quot;,&quot;JS&quot;,&quot;Go&quot;]">
+  <body class="index" data-languages="[&quot;java&quot;,&quot;php&quot;,&quot;Go&quot;]">
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -212,8 +212,6 @@
         <div class="lang-selector">
               <a href="#" data-language-name="java">java</a>
               <a href="#" data-language-name="php">php</a>
-              <a href="#" data-language-name="Python">Python</a>
-              <a href="#" data-language-name="JS">JS</a>
               <a href="#" data-language-name="Go">Go</a>
         </div>
       <div id="toc">
@@ -484,7 +482,178 @@ If you bypass the logic of hash calculation, you are vulnarable to a security lo
 <span class="p">}</span>
 
 <span class="k">print</span> <span class="s2">"Hash: </span><span class="nv">$hash</span><span class="s2">"</span><span class="p">;</span>
-</code></pre>
+</code></pre><pre class="highlight go tab-go"><code><span class="k">package</span><span class="x"> </span><span class="n">authmeclient</span><span class="x">
+
+</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
+  </span><span class="s">"time"</span><span class="x">
+  </span><span class="s">"net/http"</span><span class="x">
+  </span><span class="s">"encoding/json"</span><span class="x">
+  </span><span class="s">"io/ioutil"</span><span class="x">
+  </span><span class="s">"bytes"</span><span class="x">
+  </span><span class="s">"errors"</span><span class="x">
+  </span><span class="s">"sort"</span><span class="x">
+  </span><span class="s">"fmt"</span><span class="x">
+  </span><span class="s">"strings"</span><span class="x">
+  </span><span class="s">"crypto/sha256"</span><span class="x">
+</span><span class="p">)</span><span class="x">
+
+</span><span class="k">var</span><span class="x"> </span><span class="n">client</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="o">&amp;</span><span class="n">http</span><span class="o">.</span><span class="n">Client</span><span class="p">{}</span><span class="x">
+
+</span><span class="k">type</span><span class="x"> </span><span class="n">AuthmeClientInterface</span><span class="x"> </span><span class="k">interface</span><span class="x"> </span><span class="p">{</span><span class="x">
+  </span><span class="n">GetOrder</span><span class="p">(</span><span class="n">referenceId</span><span class="x"> </span><span class="kt">string</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">Order</span><span class="p">,</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x">
+  </span><span class="n">InitOrder</span><span class="p">(</span><span class="n">AuthenticationRequest</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">Order</span><span class="p">,</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x">
+  </span><span class="n">InitOrderWithApiKey</span><span class="p">(</span><span class="n">orderPlace</span><span class="x"> </span><span class="n">AuthenticationRequest</span><span class="p">,</span><span class="x"> </span><span class="n">apiKey</span><span class="x"> </span><span class="kt">string</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">Order</span><span class="p">,</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">type</span><span class="x"> </span><span class="n">Order</span><span class="x"> </span><span class="k">struct</span><span class="x"> </span><span class="p">{</span><span class="x">
+  </span><span class="n">Id</span><span class="x">          </span><span class="kt">uint64</span><span class="x"> </span><span class="s">`json:"-"`</span><span class="x">
+  </span><span class="n">CreatedAt</span><span class="x">   </span><span class="n">time</span><span class="o">.</span><span class="n">Time</span><span class="x">
+  </span><span class="n">ReferenceId</span><span class="x"> </span><span class="kt">string</span><span class="x">
+  </span><span class="n">UserId</span><span class="x">      </span><span class="kt">uint64</span><span class="x">
+  </span><span class="n">Comment</span><span class="x">     </span><span class="kt">string</span><span class="x">
+  </span><span class="n">Status</span><span class="x">      </span><span class="kt">string</span><span class="x">
+  </span><span class="n">Details</span><span class="x">     </span><span class="kt">string</span><span class="x">
+  </span><span class="n">Token</span><span class="x">       </span><span class="o">*</span><span class="kt">string</span><span class="x">
+  </span><span class="n">Data</span><span class="x">        </span><span class="o">*</span><span class="kt">string</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">type</span><span class="x"> </span><span class="n">AuthmeClient</span><span class="x"> </span><span class="k">struct</span><span class="x"> </span><span class="p">{</span><span class="x">
+  </span><span class="n">endPoint</span><span class="x">  </span><span class="kt">string</span><span class="x">
+  </span><span class="n">apiKey</span><span class="x">    </span><span class="kt">string</span><span class="x">
+  </span><span class="n">apiSecret</span><span class="x"> </span><span class="kt">string</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">type</span><span class="x"> </span><span class="n">AuthenticationRequest</span><span class="x"> </span><span class="k">struct</span><span class="x"> </span><span class="p">{</span><span class="x">
+  </span><span class="n">ReferenceId</span><span class="x">        </span><span class="kt">string</span><span class="x">
+  </span><span class="n">UserIdentifier</span><span class="x">     </span><span class="kt">string</span><span class="x">
+  </span><span class="n">UserIdentifierType</span><span class="x"> </span><span class="kt">string</span><span class="x">
+  </span><span class="n">PublicKeyJson</span><span class="x">      </span><span class="kt">string</span><span class="x">
+  </span><span class="n">Comment</span><span class="x">            </span><span class="kt">string</span><span class="x">
+  </span><span class="n">Message</span><span class="x">            </span><span class="kt">string</span><span class="x">
+  </span><span class="n">Ip</span><span class="x">                 </span><span class="kt">string</span><span class="x">
+  </span><span class="n">Hash</span><span class="x">               </span><span class="kt">string</span><span class="x">
+  </span><span class="n">Client</span><span class="x">             </span><span class="kt">string</span><span class="x">
+  </span><span class="n">Data</span><span class="x">               </span><span class="kt">string</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">NewAuthmeClient</span><span class="p">(</span><span class="n">endPoint</span><span class="x"> </span><span class="kt">string</span><span class="p">)</span><span class="x"> </span><span class="n">AuthmeClientInterface</span><span class="x"> </span><span class="p">{</span><span class="x">
+  </span><span class="k">return</span><span class="x"> </span><span class="o">&amp;</span><span class="n">AuthmeClient</span><span class="p">{</span><span class="x">
+    </span><span class="n">endPoint</span><span class="o">:</span><span class="x"> </span><span class="n">endPoint</span><span class="p">,</span><span class="x">
+  </span><span class="p">}</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">NewAuthmeClientWithApiKey</span><span class="p">(</span><span class="n">endPoint</span><span class="x"> </span><span class="kt">string</span><span class="p">,</span><span class="x"> </span><span class="n">apiKey</span><span class="x"> </span><span class="kt">string</span><span class="p">,</span><span class="x"> </span><span class="n">apiSecret</span><span class="x"> </span><span class="kt">string</span><span class="p">)</span><span class="x"> </span><span class="n">AuthmeClientInterface</span><span class="x"> </span><span class="p">{</span><span class="x">
+  </span><span class="k">return</span><span class="x"> </span><span class="o">&amp;</span><span class="n">AuthmeClient</span><span class="p">{</span><span class="x">
+    </span><span class="n">endPoint</span><span class="o">:</span><span class="x"> </span><span class="n">endPoint</span><span class="p">,</span><span class="x">
+    </span><span class="n">apiKey</span><span class="o">:</span><span class="x"> </span><span class="n">apiKey</span><span class="p">,</span><span class="x">
+    </span><span class="n">apiSecret</span><span class="o">:</span><span class="x"> </span><span class="n">apiSecret</span><span class="p">,</span><span class="x">
+  </span><span class="p">}</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">x</span><span class="x"> </span><span class="o">*</span><span class="n">AuthmeClient</span><span class="p">)</span><span class="x"> </span><span class="n">GenerateHash</span><span class="p">(</span><span class="n">request</span><span class="x"> </span><span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="k">interface</span><span class="p">{})</span><span class="x"> </span><span class="kt">string</span><span class="x"> </span><span class="p">{</span><span class="x">
+  </span><span class="k">var</span><span class="x"> </span><span class="n">keys</span><span class="x"> </span><span class="p">[]</span><span class="kt">string</span><span class="x">
+  </span><span class="c">//log.Infof("%v", x)</span><span class="x">
+  </span><span class="k">for</span><span class="x"> </span><span class="n">k</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="k">range</span><span class="x"> </span><span class="n">request</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="k">if</span><span class="x"> </span><span class="n">k</span><span class="x"> </span><span class="o">==</span><span class="x"> </span><span class="s">"Hash"</span><span class="x"> </span><span class="p">{</span><span class="x">
+      </span><span class="k">continue</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+    </span><span class="n">keys</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="nb">append</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span><span class="x"> </span><span class="n">k</span><span class="p">)</span><span class="x">
+  </span><span class="p">}</span><span class="x">
+
+  </span><span class="c">//givenHash, ok := request["Hash"]</span><span class="x">
+  </span><span class="c">//if !ok {</span><span class="x">
+  </span><span class="c">//    return false</span><span class="x">
+  </span><span class="c">//}</span><span class="x">
+  </span><span class="n">sort</span><span class="o">.</span><span class="n">Strings</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span><span class="x">
+  </span><span class="n">values</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="nb">make</span><span class="p">([]</span><span class="kt">string</span><span class="p">,</span><span class="x"> </span><span class="m">1</span><span class="p">)</span><span class="x">
+  </span><span class="n">values</span><span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">x</span><span class="o">.</span><span class="n">apiKey</span><span class="x">
+
+  </span><span class="k">for</span><span class="x"> </span><span class="n">_</span><span class="p">,</span><span class="x"> </span><span class="n">key</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="k">range</span><span class="x"> </span><span class="n">keys</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="k">var</span><span class="x"> </span><span class="n">v</span><span class="x"> </span><span class="kt">string</span><span class="x">
+    </span><span class="k">if</span><span class="x"> </span><span class="n">request</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+      </span><span class="n">v</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"%v"</span><span class="p">,</span><span class="x"> </span><span class="n">request</span><span class="p">[</span><span class="n">key</span><span class="p">])</span><span class="x">
+    </span><span class="p">}</span><span class="x"> </span><span class="k">else</span><span class="x"> </span><span class="p">{</span><span class="x">
+      </span><span class="n">v</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">""</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+    </span><span class="k">if</span><span class="x"> </span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="x"> </span><span class="o">&lt;</span><span class="x"> </span><span class="m">1</span><span class="x"> </span><span class="p">{</span><span class="x">
+      </span><span class="c">//values = append(values, "")</span><span class="x">
+      </span><span class="k">continue</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+    </span><span class="c">//log.Infof("%s: %v", key, v)</span><span class="x">
+    </span><span class="n">values</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="nb">append</span><span class="p">(</span><span class="n">values</span><span class="p">,</span><span class="x"> </span><span class="n">v</span><span class="p">)</span><span class="x">
+  </span><span class="p">}</span><span class="x">
+  </span><span class="n">values</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="nb">append</span><span class="p">(</span><span class="n">values</span><span class="p">,</span><span class="x"> </span><span class="n">x</span><span class="o">.</span><span class="n">apiSecret</span><span class="p">)</span><span class="x">
+
+  </span><span class="n">hashString</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">strings</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">values</span><span class="p">,</span><span class="x"> </span><span class="s">"|"</span><span class="p">)</span><span class="x">
+  </span><span class="n">h</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">sha256</span><span class="o">.</span><span class="n">New</span><span class="p">()</span><span class="x">
+  </span><span class="n">h</span><span class="o">.</span><span class="n">Write</span><span class="p">([]</span><span class="kt">byte</span><span class="p">(</span><span class="n">hashString</span><span class="p">))</span><span class="x">
+  </span><span class="n">bs</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">h</span><span class="o">.</span><span class="n">Sum</span><span class="p">(</span><span class="no">nil</span><span class="p">)</span><span class="x">
+  </span><span class="n">calculatedHash</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"%x"</span><span class="p">,</span><span class="x"> </span><span class="n">bs</span><span class="p">)</span><span class="x">
+  </span><span class="k">return</span><span class="x"> </span><span class="n">calculatedHash</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">ac</span><span class="x"> </span><span class="o">*</span><span class="n">AuthmeClient</span><span class="p">)</span><span class="x"> </span><span class="n">GetOrder</span><span class="p">(</span><span class="n">referenceId</span><span class="x">  </span><span class="kt">string</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">Order</span><span class="p">,</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+
+  </span><span class="n">url</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">ac</span><span class="o">.</span><span class="n">endPoint</span><span class="x"> </span><span class="o">+</span><span class="x"> </span><span class="s">"/order/"</span><span class="x"> </span><span class="o">+</span><span class="x"> </span><span class="n">referenceId</span><span class="x">
+  </span><span class="n">response</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="x">
+  </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="k">return</span><span class="x"> </span><span class="n">Order</span><span class="p">{},</span><span class="x"> </span><span class="n">err</span><span class="x">
+  </span><span class="p">}</span><span class="x">
+  </span><span class="n">content</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span><span class="x">
+  </span><span class="k">var</span><span class="x"> </span><span class="n">order</span><span class="x"> </span><span class="n">Order</span><span class="x">
+  </span><span class="n">json</span><span class="o">.</span><span class="n">Unmarshal</span><span class="p">(</span><span class="n">content</span><span class="p">,</span><span class="x"> </span><span class="o">&amp;</span><span class="n">order</span><span class="p">)</span><span class="x">
+  </span><span class="k">return</span><span class="x"> </span><span class="n">order</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">ac</span><span class="x"> </span><span class="o">*</span><span class="n">AuthmeClient</span><span class="p">)</span><span class="x"> </span><span class="n">InitOrder</span><span class="p">(</span><span class="n">order</span><span class="x"> </span><span class="n">AuthenticationRequest</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">Order</span><span class="p">,</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+  </span><span class="k">if</span><span class="x"> </span><span class="nb">len</span><span class="p">(</span><span class="n">ac</span><span class="o">.</span><span class="n">apiKey</span><span class="p">)</span><span class="x"> </span><span class="o">&lt;</span><span class="x"> </span><span class="m">2</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="nb">panic</span><span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"ApiKey not set"</span><span class="p">))</span><span class="x">
+  </span><span class="p">}</span><span class="x">
+  </span><span class="k">return</span><span class="x"> </span><span class="n">ac</span><span class="o">.</span><span class="n">InitOrderWithApiKey</span><span class="p">(</span><span class="n">order</span><span class="p">,</span><span class="x"> </span><span class="n">ac</span><span class="o">.</span><span class="n">apiKey</span><span class="p">)</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">ac</span><span class="x"> </span><span class="o">*</span><span class="n">AuthmeClient</span><span class="p">)</span><span class="x"> </span><span class="n">InitOrderWithApiKey</span><span class="p">(</span><span class="n">orderPlace</span><span class="x"> </span><span class="n">AuthenticationRequest</span><span class="p">,</span><span class="x"> </span><span class="n">apiKey</span><span class="x"> </span><span class="kt">string</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">Order</span><span class="p">,</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+  </span><span class="n">jsonRequest</span><span class="p">,</span><span class="x"> </span><span class="n">_</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">json</span><span class="o">.</span><span class="n">Marshal</span><span class="p">(</span><span class="n">orderPlace</span><span class="p">)</span><span class="x">
+  </span><span class="n">req</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">http</span><span class="o">.</span><span class="n">NewRequest</span><span class="p">(</span><span class="s">"POST"</span><span class="p">,</span><span class="x"> </span><span class="n">ac</span><span class="o">.</span><span class="n">endPoint</span><span class="x"> </span><span class="o">+</span><span class="x"> </span><span class="s">"/order"</span><span class="p">,</span><span class="x"> </span><span class="n">bytes</span><span class="o">.</span><span class="n">NewBuffer</span><span class="p">(</span><span class="n">jsonRequest</span><span class="p">))</span><span class="x">
+  </span><span class="n">req</span><span class="o">.</span><span class="n">Header</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="s">"Content-Type"</span><span class="p">,</span><span class="x"> </span><span class="s">"application/json"</span><span class="p">)</span><span class="x">
+  </span><span class="n">req</span><span class="o">.</span><span class="n">Header</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="s">"X-API-KEY"</span><span class="p">,</span><span class="x"> </span><span class="n">apiKey</span><span class="p">)</span><span class="x">
+
+  </span><span class="n">resp</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">client</span><span class="o">.</span><span class="n">Do</span><span class="p">(</span><span class="n">req</span><span class="p">)</span><span class="x">
+
+  </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="k">return</span><span class="x"> </span><span class="n">Order</span><span class="p">{},</span><span class="x"> </span><span class="n">err</span><span class="x">
+  </span><span class="p">}</span><span class="x">
+  </span><span class="n">body</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">ioutil</span><span class="o">.</span><span class="n">ReadAll</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">Body</span><span class="p">)</span><span class="x">
+  </span><span class="k">var</span><span class="x"> </span><span class="n">o</span><span class="x"> </span><span class="n">Order</span><span class="x">
+  </span><span class="n">json</span><span class="o">.</span><span class="n">Unmarshal</span><span class="p">([]</span><span class="kt">byte</span><span class="p">(</span><span class="n">body</span><span class="p">),</span><span class="x"> </span><span class="o">&amp;</span><span class="n">o</span><span class="p">)</span><span class="x">
+  </span><span class="k">return</span><span class="x"> </span><span class="n">o</span><span class="p">,</span><span class="x"> </span><span class="no">nil</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+
+</span><span class="c">/*------------------------------------------------------------------------------------------------------------*/</span><span class="x">
+</span><span class="k">package</span><span class="x"> </span><span class="n">authmeclient</span><span class="x">
+
+</span><span class="k">import</span><span class="x"> </span><span class="s">"testing"</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">TestHashCalculation</span><span class="p">(</span><span class="n">t</span><span class="x"> </span><span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="x"> </span><span class="p">{</span><span class="x">
+
+  </span><span class="n">ac</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">AuthmeClient</span><span class="p">{</span><span class="x">
+    </span><span class="n">apiKey</span><span class="o">:</span><span class="x"> </span><span class="s">"YOUR_API_KEY"</span><span class="p">,</span><span class="x">
+    </span><span class="n">apiSecret</span><span class="o">:</span><span class="x"> </span><span class="s">"YOUR_SECRET_KEY"</span><span class="p">,</span><span class="x">
+  </span><span class="p">}</span><span class="x">
+
+  </span><span class="n">request</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="nb">make</span><span class="p">(</span><span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="k">interface</span><span class="p">{})</span><span class="x">
+  </span><span class="n">request</span><span class="p">[</span><span class="s">"test"</span><span class="p">]</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="s">"hello"</span><span class="x">
+
+  </span><span class="n">calculatedHash</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">ac</span><span class="o">.</span><span class="n">GenerateHash</span><span class="p">(</span><span class="n">request</span><span class="p">)</span><span class="x">
+  </span><span class="n">t</span><span class="o">.</span><span class="n">Logf</span><span class="p">(</span><span class="s">"Calculated hash: %s"</span><span class="p">,</span><span class="x"> </span><span class="n">calculatedHash</span><span class="p">)</span><span class="x">
+  </span><span class="k">if</span><span class="x"> </span><span class="n">calculatedHash</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="s">"292115573432d504b797a836e3a1936ea5ce9ef61bd90c8096dbd86c449d3d75"</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="n">t</span><span class="o">.</span><span class="n">Fail</span><span class="p">()</span><span class="x">
+    </span><span class="n">t</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="s">"Failed, expected hash 292115573432d504b797a836e3a1936ea5ce9ef61bd90c8096dbd86c449d3d75"</span><span class="p">)</span><span class="x">
+  </span><span class="p">}</span><span class="x">
+
+</span><span class="p">}</span><span class="x">
+</span></code></pre>
 <p>Here&rsquo;s the logic to calculate hash. </p>
 
 <p>Modules on the right side, should help you integrate this quickly.</p>
@@ -600,8 +769,6 @@ Remember to replace API & secret key with your API & secret key before deploying
           <div class="lang-selector">
                 <a href="#" data-language-name="java">java</a>
                 <a href="#" data-language-name="php">php</a>
-                <a href="#" data-language-name="Python">Python</a>
-                <a href="#" data-language-name="JS">JS</a>
                 <a href="#" data-language-name="Go">Go</a>
           </div>
       </div>
