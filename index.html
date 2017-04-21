@@ -200,7 +200,7 @@
       <script src="javascripts/all_nosearch.js"></script>
   </head>
 
-  <body class="index" data-languages="[&quot;java&quot;,&quot;php&quot;,&quot;Go&quot;]">
+  <body class="index" data-languages="[&quot;java&quot;,&quot;php&quot;,&quot;Go&quot;,&quot;javascript&quot;]">
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -213,6 +213,7 @@
               <a href="#" data-language-name="java">java</a>
               <a href="#" data-language-name="php">php</a>
               <a href="#" data-language-name="Go">Go</a>
+              <a href="#" data-language-name="javascript">javascript</a>
         </div>
       <div id="toc">
       </div>
@@ -230,7 +231,7 @@
 
 <p>Before you start off, make sure that you have the API Key and Secret Key. If not, get them from <a href="https://account.authme.authme.host/generatekeys">here.</a></p>
 
-<p>It can be found on the left panel of the dashboard.</p>
+<p>They can be found on the left panel of the dashboard.</p>
 
 <p>API Key looks like this: <code class="prettyprint">k-162b77f3-5937-4856-af1b-7950a001f732</code> and can be exposed in public clients (Android, iOS, Windows apps)</p>
 
@@ -239,8 +240,8 @@
 <p>Integration has 2 parts.</p>
 
 <ol>
-<li><p>Client Integration (Android/iOS/Window)</p></li>
-<li><p>Server Integration (PHP/Java/Go/Python/Js)</p></li>
+<li><p>Client Integration (Android/iOS/Window/Js Integration for web)</p></li>
+<li><p>Server Integration (PHP/Java/Go)</p></li>
 </ol>
 
 <h1 id="android-integration">Android Integration</h1>
@@ -249,7 +250,7 @@
 
 <p>Add the following line to your app build.gradle file</p>
 
-<p><code class="prettyprint">compile &#39;io.authme:patternlock:0.1.5&#39;</code></p>
+<p><code class="prettyprint">compile &#39;io.authme:patternlock:0.1.9.5&#39;</code></p>
 
 <p>Build your project.</p>
 
@@ -372,7 +373,7 @@ Ensure that the environment and keys are appropriate.
 
 <p>Speed score 72 means that user matches 72% to his velocity behaviour.</p>
 
-<p>Motion sensor 0.93 means that user matches 93% to his movements behaviour.</p>
+<p>Motion sensor 93 means that user matches 93% to his movements behaviour.</p>
 
 <h3 id="whats-hash-why-is-it-so-important">What&rsquo;s hash? Why is it so important?</h3>
 
@@ -384,7 +385,120 @@ Ensure that the environment and keys are appropriate.
 If you bypass the logic of hash calculation, you are vulnarable to a security loophole.
 </aside>
 
-<p>In the server integration, we will demonstrate how hash is calculated.</p>
+<p>In the server integration, we will demonstrate how a hash is calculated.</p>
+
+<h1 id="web-integration">Web Integration</h1>
+
+<p>AuthMe web helps you identify the user based on device fingerprint + typing behaviour. </p>
+
+<p>If the user exists on AuthMe network, you can identify the user based on just email or mobile phone.</p>
+
+<h2 id="1-include-the-js">1. Include the js</h2>
+<pre class="highlight javascript tab-javascript"><code><span class="o">&lt;</span><span class="nx">head</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="nx">title</span><span class="o">&gt;</span><span class="nx">AuthMe</span> <span class="o">-</span> <span class="nx">Web</span> <span class="nx">Integration</span><span class="o">&lt;</span><span class="sr">/title</span><span class="err">&gt;
+</span>  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">"https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"</span><span class="o">&gt;&lt;</span><span class="sr">/script</span><span class="err">&gt;
+</span>  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">"https://api.authme.authme.host/typer.js"</span><span class="o">&gt;&lt;</span><span class="sr">/script</span><span class="err">&gt;
+</span>  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/javascript"</span><span class="o">&gt;</span>
+    <span class="kd">function</span> <span class="nx">initAuthMe</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nb">window</span><span class="p">.</span><span class="nx">am</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AuthmeTyper</span><span class="p">();</span>
+      <span class="nx">AuthmeTyper</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">information</span> <span class="o">=</span> <span class="p">[];</span>
+          <span class="nx">AuthmeTyper</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">startListener</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="o">&lt;</span><span class="sr">/script</span><span class="err">&gt;
+</span><span class="o">&lt;</span><span class="sr">/head</span><span class="err">&gt;
+</span></code></pre>
+<p>As shown in the js code snippet on the right, include the typer.js in your html page.</p>
+
+<p>Also, copy the initAuthMe() function call.</p>
+
+<h2 id="2-create-a-login-form">2. Create a login form</h2>
+<pre class="highlight javascript tab-javascript"><code><span class="o">&lt;</span><span class="nx">form</span> <span class="nx">action</span><span class="o">=</span><span class="s2">"#"</span> <span class="nx">id</span><span class="o">=</span><span class="s2">"loginform"</span> <span class="nx">onsubmit</span><span class="o">=</span><span class="s2">"return false"</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text"</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"logininput"</span> <span class="nx">placeholder</span><span class="o">=</span><span class="s2">"Email or Mobile"</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"submit"</span> <span class="nx">value</span><span class="o">=</span><span class="s2">"login"</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="sr">/form</span><span class="err">&gt;
+</span></code></pre>
+<p>This login form can capture any user identifier. </p>
+
+<p>It could be either email id, mobile number or some primary key. </p>
+
+<p>Longer the length of identifier, better the trust score.</p>
+
+<h2 id="3-get-the-score">3. Get the score</h2>
+<pre class="highlight javascript tab-javascript"><code><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+<span class="nx">$</span><span class="p">(</span><span class="s2">"#loginform"</span> <span class="p">).</span><span class="nx">submit</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span> <span class="nx">event</span> <span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">am</span><span class="p">.</span><span class="nx">information</span><span class="p">;</span>
+
+  <span class="nx">initAuthMe</span><span class="p">();</span>
+
+  <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+          <span class="na">url</span><span class="p">:</span> <span class="s1">'https://api.authme.authme.host/typing/check'</span><span class="p">,</span>
+          <span class="na">dataType</span><span class="p">:</span> <span class="s1">'json'</span><span class="p">,</span>
+          <span class="na">data</span><span class="p">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+            <span class="na">UserIdentifier</span><span class="p">:</span> <span class="s2">"email"</span><span class="p">,</span>
+            <span class="na">Data</span><span class="p">:</span> <span class="nx">data</span>
+          <span class="p">}),</span>
+          <span class="na">headers</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'X-Api-Key'</span><span class="p">:</span> <span class="s2">"&lt;YOUR_API_KEY&gt;"</span><span class="p">,</span>
+          <span class="p">},</span>
+          <span class="na">method</span><span class="p">:</span> <span class="s2">"POST"</span><span class="p">,</span>
+          <span class="na">success</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">Data</span><span class="p">.</span><span class="nx">Score</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">json</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">Data</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">})</span>
+
+<span class="p">});</span>
+<span class="o">&lt;</span><span class="sr">/script</span><span class="err">&gt;
+</span></code></pre>
+<p>Copy this script into your HTML code. </p>
+
+<p>This snippet gets executed when the user submits the form.</p>
+
+<p>If user with the email/phone exists on the AuthMe network, you will get a trust score. </p>
+
+<p>If not, you need to continue with your existing OTP/password flow. </p>
+
+<aside class="notice">
+Remember to replace YOUR_API_KEY with your API key before deploying!
+</aside>
+
+<h2 id="4-whats-a-trust-score">4. What&rsquo;s a trust score?</h2>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+</span><span class="s2">"Accept"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span><span class="w">
+</span><span class="s2">"Count"</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="w">
+</span><span class="s2">"Hash"</span><span class="p">:</span><span class="s2">"378dc964fccccfa65c5ea5f5dfc95655eb46679b57d934898fb6342f0add75eb"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"Input-0-Name"</span><span class="p">:</span><span class="s2">"text#logininput"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"Input-0-Score"</span><span class="p">:</span><span class="mi">93</span><span class="p">,</span><span class="w">
+</span><span class="s2">"Score"</span><span class="p">:</span><span class="mi">93</span><span class="p">,</span><span class="w">
+</span><span class="s2">"UserProfilePercent"</span><span class="p">:</span><span class="mi">100</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>Trust score (see javascript section on the right) is an indication of how much the user matches with his/her typing behaviour.</p>
+
+<p>You can have several inputs in the form such as <code class="prettyprint">&lt;input type=&quot;text&quot; name=&quot;logininput&quot; placeholder=&quot;Email or Mobile&quot;&gt;</code></p>
+
+<p>You will receive the respective trust scores in the Input-<x>-Name and Input-<y>Score fields.</p>
+
+<p>In the form mentioned above, there&rsquo;s only one input with name logininput.</p>
+
+<p>Hence the trust score has Input-0-Name and its score respectively.</p>
+
+<p><code class="prettyprint">var json</code> will have the trust score. </p>
+
+<h2 id="5-what-to-do-with-the-trust-score">5. What to do with the trust score?</h2>
+
+<p>Post this trust score to your server and calculate the hash to confirm that the score is not tampered with.</p>
+
+<p>If the trust score is above 80%, you can log in the user. </p>
+
+<p>If not, continue with the existing flow (OTP or passwords.)</p>
+
+<aside class="warning">
+If you bypass the logic of hash calculation, you are vulnarable to a security loophole.
+</aside>
+
+<p>In the server integration, we will demonstrate how a hash is calculated.</p>
 
 <h1 id="server-integration">Server Integration</h1>
 <pre class="highlight java tab-java"><code><span class="kn">import</span> <span class="nn">java.security.MessageDigest</span><span class="o">;</span>
@@ -770,6 +884,7 @@ Remember to replace API & secret key with your API & secret key before deploying
                 <a href="#" data-language-name="java">java</a>
                 <a href="#" data-language-name="php">php</a>
                 <a href="#" data-language-name="Go">Go</a>
+                <a href="#" data-language-name="javascript">javascript</a>
           </div>
       </div>
     </div>
